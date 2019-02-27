@@ -1,6 +1,8 @@
 package eu.su.mas.dedaleEtu.mas.object;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Node implements Serializable{
 	
@@ -15,11 +17,23 @@ public class Node implements Serializable{
 	private String name;
 	private int nature;
 	private int quantity;
+	private boolean visited;
+	private List<String> neighbours;
 	
 	public Node(String n, int na, int q) {
 		name = n;
 		nature = na;
 		quantity = q;
+		visited  = false;
+		neighbours = new ArrayList<>();
+	}
+	
+	public Node(Node other) {
+		name = other.getName();
+		nature = other.getNature();
+		quantity = other.getQuantity();
+		visited = other.isVisited();
+		neighbours = other.getNeighbours();
 	}
 	
 	public String getName() {
@@ -33,6 +47,14 @@ public class Node implements Serializable{
 	public int getQuantity() {
 		return quantity;
 	}
+
+	public boolean isVisited() {
+		return visited;
+	}
+	
+	public List<String> getNeighbours(){
+		return neighbours;
+	}
 	
 	public void setNature(int n) {
 		nature = n;
@@ -40,6 +62,22 @@ public class Node implements Serializable{
 	
 	public void setQuantity(int q) {
 		quantity = q;
+	}
+	
+	public void visit() {
+		visited = true;
+	}
+	
+	public void addNeighbour(String name) {
+		neighbours.add(name);
+	}
+	
+	/**
+	 * Does nothing for now; will have to be implemented (maybe with adding a latest-update time in the node?)
+	 * @param other the same node, in another agent's graph
+	 */
+	public void update(Node other) {
+		//TODO who's right? me or other?
 	}
 
 }
