@@ -9,7 +9,8 @@ import java.util.Set;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
-import eu.su.mas.dedaleEtu.mas.knowledge.MyMapRepresentation;
+import eu.su.mas.dedaleEtu.mas.object.Graphe;
+import eu.su.mas.dedaleEtu.mas.object.Node;
 import jade.core.behaviours.SimpleBehaviour;
 
 public class MyExploSoloBehaviour extends SimpleBehaviour{
@@ -27,9 +28,9 @@ public class MyExploSoloBehaviour extends SimpleBehaviour{
 	 */
 	private Set<String> closedNodes;
 	
-	private MyMapRepresentation myMap;
+	private Graphe myMap;
 
-	public MyExploSoloBehaviour(AbstractDedaleAgent myagent, MyMapRepresentation mp) {
+	public MyExploSoloBehaviour(AbstractDedaleAgent myagent, Graphe mp) {
 		super(myagent);
 		this.openNodes=new ArrayList<String>();
 		this.closedNodes=new HashSet<String>();
@@ -38,6 +39,7 @@ public class MyExploSoloBehaviour extends SimpleBehaviour{
 
 	@Override
 	public void action() {
+		/*
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 	
@@ -47,7 +49,7 @@ public class MyExploSoloBehaviour extends SimpleBehaviour{
 
 			/**
 			 * Just added here to let you see what the agent is doing, otherwise he will be too quick
-			 */
+			 *
 			try {
 				this.myAgent.doWait(500);
 			} catch (Exception e) {
@@ -72,27 +74,27 @@ public class MyExploSoloBehaviour extends SimpleBehaviour{
 						this.openNodes.add(nodeId);
 						
 						if(nodeContents.isEmpty())
-							this.myMap.addNode(nodeId, MyMapRepresentation.VOID, 0);
+							this.myMap.addNode(nodeId, Node.VOID, 0);
 						else {
 							for (Couple<Observation, Integer> cont : nodeContents) {
 								switch(cont.getLeft()) {
 								case DIAMOND:
-									this.myMap.addNode(nodeId, MyMapRepresentation.DIAMOND, cont.getRight());
+									this.myMap.addNode(nodeId, Node.DIAMOND, cont.getRight());
 									break;
 								case GOLD:
-									this.myMap.addNode(nodeId, MyMapRepresentation.GOLD, cont.getRight());
+									this.myMap.addNode(nodeId, Node.GOLD, cont.getRight());
 									break;
 								default:
-									this.myMap.addNode(nodeId, MyMapRepresentation.VOID, 0);
+									this.myMap.addNode(nodeId, Node.VOID, 0);
 									break;
 								}
 							}
 						}
 						
-						this.myMap.addEdge(myPosition, nodeId);	
+						this.myMap.addEdges(myPosition, nodeId);	
 					}else{
 						//the node exist, but not necessarily the edge
-						this.myMap.addEdge(myPosition, nodeId);
+						this.myMap.addEdges(myPosition, nodeId);
 					}
 					if (nextNode==null) nextNode=nodeId;
 				}
@@ -114,7 +116,7 @@ public class MyExploSoloBehaviour extends SimpleBehaviour{
 				}
 				((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
 			}
-		}		
+		}		*/
 	}
 
 	@Override

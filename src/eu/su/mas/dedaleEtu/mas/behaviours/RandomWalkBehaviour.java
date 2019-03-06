@@ -7,6 +7,7 @@ import java.util.Random;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
+import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import jade.core.behaviours.OneShotBehaviour;
 
 /**************************************
@@ -84,13 +85,10 @@ public class RandomWalkBehaviour extends OneShotBehaviour{
 			((AbstractDedaleAgent)this.myAgent).moveTo(lobs.get(moveId).getLeft());
 		}
 
-		if(true) // if map is finished
+		if(((MyAbstractAgent) this.myAgent).isCompleteMap()) // if map is finished
 			endVal = 1;
-		else if (true) //if I received a ping
-			endVal = 3;
-		else 
+		else
 			endVal = 2;
-		
 	}
 
 	@Override

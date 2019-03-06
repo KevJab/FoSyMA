@@ -52,10 +52,5 @@ public class SendMessageBehaviour extends SimpleBehaviour {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-	@Override
-	public int onEnd() {
-		return -1;  //TODO
-	}
 
 }

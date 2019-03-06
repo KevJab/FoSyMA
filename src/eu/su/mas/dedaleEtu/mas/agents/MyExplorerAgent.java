@@ -11,7 +11,7 @@ import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceivedMessageBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHello;
 import eu.su.mas.dedaleEtu.mas.behaviours.SendMessageBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.WaitHello;
+import eu.su.mas.dedaleEtu.mas.behaviours.WaitBehaviour;
 import eu.su.mas.dedaleEtu.mas.data.MapInformation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MyMapRepresentation;
 import jade.core.behaviours.Behaviour;
@@ -63,26 +63,31 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		FSMBehaviour fsm = new FSMBehaviour(this);
 		//TODO to use FSMBehaviour, these events need to redefine the public int onEnd() method
 		//TODO for now, I'm considering all these behaviours work as intended
-		fsm.registerFirstState(new RandomWalkBehaviour(this), "Walk"); 	//onEnd() -> 1 if not fully explored, 2 otherwise
+		fsm.registerFirstState(new RandomWalkBehaviour(this), "Walk"); 	//onEnd() -> 1 if not fully explored, 2 otherwise; TODO not random, target = open node
+		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.PING), "PingWait");
 		fsm.registerState(new SayHello(this), "PingSend");					
-		fsm.registerState(new WaitHello(this), "PingWait");				//onEnd() -> 1 if nobody in range, 2 otherwise
+		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.PINGRESPONSE), "PingResponseWait");				//onEnd() -> 1 if nobody in range, 2 otherwise
 		fsm.registerState(new SendMessageBehaviour(this), "Send");
 		fsm.registerState(new ReceivedMessageBehaviour(this), "Receive");
-		fsm.registerState(new ReceivedMessageBehaviour(this), "WaitSend");
+		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.SEND), "WaitSend");
 		fsm.registerState(new SendMessageBehaviour(this), "Send2");
-		fsm.registerLastState(new MyExploSoloBehaviour(this, myMap), "Explore");	//make it cyclic!
+		fsm.registerLastState(new MyExploSoloBehaviour(this, myMap), "Explore");	//make it cyclic!; TODO previously myMapRepresentation/MapInfo, translate to Graphe
 		
-		fsm.registerTransition("Walk", "Explore", 2);
-		fsm.registerTransition("Walk", "PingSend", 1);
-		fsm.registerTransition("Walk", "WaitSend", 3);
+		fsm.registerTransition("Walk", "Explore", 1);
+		fsm.registerTransition("Walk", "PingWait", 2);
 		
-		fsm.registerTransition("PingWait", "Walk", 1);
-		fsm.registerTransition("PingWait", "Send", 2);
+		fsm.registerTransition("PingWait", "PingSend", 1);
+		fsm.registerTransition("PingWait", "WaitSend", 2);
 		
-		fsm.registerDefaultTransition("PingSend", "PingWait");
+		fsm.registerTransition("PingResponseWait", "Walk", 1);
+		fsm.registerTransition("PingResponseWait", "Send", 2);
+		
+		fsm.registerTransition("WaitSend", "PingSend", 1);
+		fsm.registerTransition("WaitSend", "Send2", 2);
+		
+		fsm.registerDefaultTransition("PingSend", "PingResponseWait");
 		fsm.registerDefaultTransition("Send", "Receive");
 		fsm.registerDefaultTransition("Receive", "Walk");
-		fsm.registerDefaultTransition("WaitSend", "Send2");
 		fsm.registerDefaultTransition("Send2", "Walk");
 		
 		lb.add(fsm);

@@ -15,7 +15,6 @@ import jade.lang.acl.ACLMessage;
  * @author hc
  *
  */
-//TODO modifier la superclasse
 public class SayHello extends OneShotBehaviour{
 
 	/**

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class Graphe implements Serializable{
 
 	private static final long serialVersionUID = -4559546512611281312L;
@@ -33,8 +34,15 @@ public class Graphe implements Serializable{
 		nodes.add(new Node(n));
 	}
 	
+	public void addNode(String id,int type, int qty){
+		if (this.hasNode(id) == null) {
+			Node n = new Node(id, type, qty);
+			nodes.add(n);
+		}
+	}
+	
 	public void addAllNeighbours(Node n) {
-		assert this.hasNode(n) != null: "ce noeud n'existe pas dans le graphe!";
+		assert this.hasNode(n.getName()) != null: "ce noeud n'existe pas dans le graphe!";
 		
 		for(String nbr : n.getNeighbours()) {
 			this.addEdges(n.getName(), nbr);
@@ -48,12 +56,12 @@ public class Graphe implements Serializable{
 	
 	/**
 	 * Goes through the <code>nodes</code> list and returns the same-named node if it exists, or <b>null</b>.
-	 * @param node the node we want
-	 * @return either the same node, but in our graph, or <b>null</b>
+	 * @param nodeId the id of the node we want
+	 * @return either the instance of nodeId in this graph, or <b>null</b>
 	 */
-	public Node hasNode(Node node) {
+	public Node hasNode(String nodeId) {
 		for(Node n : nodes) {
-			if(n.getName() == node.getName())
+			if(n.getName() == nodeId)
 				return n;
 		}
 		return null;
@@ -67,7 +75,7 @@ public class Graphe implements Serializable{
 		Node myNode;
 		for(Node n : other.getNodes()) {
 			// my instance of the same node
-			myNode = this.hasNode(n);
+			myNode = this.hasNode(n.getName());
 			if(myNode == null) {
 				this.addNode(n);
 			} else {
@@ -82,6 +90,17 @@ public class Graphe implements Serializable{
 			}
 		}
 			
+	}
+	
+	/** 
+	 * @return <code>true</code> if graph has no more open nodes, <code>false</code> otherwise
+	 */
+	public boolean isComplete() {
+		for(Node n : nodes) {
+			if (!n.isVisited())
+				return false;
+		}
+		return true;
 	}
 	
 }

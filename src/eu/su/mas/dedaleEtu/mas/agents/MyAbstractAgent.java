@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.data.MapInformation;
-import eu.su.mas.dedaleEtu.mas.knowledge.MyMapRepresentation;
+import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.AID;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -16,7 +16,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 
 	protected String type;
 	protected AID interlocuteur = null;
-	protected MyMapRepresentation myMap;
+	protected Graphe myMap;
 	protected HashMap<String, MapInformation> h = new HashMap<>();
 	
 	public String getType() {
@@ -60,6 +60,10 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		} catch (FIPAException fe) {
 			fe.printStackTrace() ; 
 		}
+	}
+	
+	public boolean isCompleteMap() {
+		return myMap.isComplete();
 	}
 
 }
