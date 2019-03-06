@@ -86,7 +86,7 @@ public final class ConfigurationFile {
 	/**
 	 * Parameter used to generate the environment 
 	 */
-	public static Integer ENVIRONMENT_SIZE=10;
+	public static Integer ENVIRONMENT_SIZE=3;
 	
 	/**
 	 * Parameter used to perceive the wumpus trough its smell

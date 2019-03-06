@@ -7,7 +7,7 @@ import java.util.Random;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
-import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 
 /**************************************
  * 
@@ -18,20 +18,21 @@ import jade.core.behaviours.TickerBehaviour;
  **************************************/
 
 
-public class RandomWalkBehaviour extends TickerBehaviour{
+public class RandomWalkBehaviour extends OneShotBehaviour{
 	
 	/**
 	 * When an agent choose to move
 	 *  
 	 */
 	private static final long serialVersionUID = 9088209402507795289L;
+	private int endVal;
 
 	public RandomWalkBehaviour (final AbstractDedaleAgent myagent) {
-		super(myagent, 600);
+		super(myagent);
 	}
 
 	@Override
-	public void onTick() {
+	public void action() {
 		//Example to retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 		System.out.println(this.myAgent.getLocalName()+" -- myCurrentPosition is: "+myPosition);
@@ -83,6 +84,18 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 			((AbstractDedaleAgent)this.myAgent).moveTo(lobs.get(moveId).getLeft());
 		}
 
+		if(true) // if map is finished
+			endVal = 1;
+		else if (true) //if I received a ping
+			endVal = 3;
+		else 
+			endVal = 2;
+		
+	}
+
+	@Override
+	public int onEnd() {
+		return endVal;
 	}
 
 }

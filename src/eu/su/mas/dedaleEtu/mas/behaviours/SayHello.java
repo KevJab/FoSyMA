@@ -1,9 +1,13 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
-import jade.core.AID;
+import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import jade.core.Agent;
-import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
 /**
@@ -11,7 +15,8 @@ import jade.lang.acl.ACLMessage;
  * @author hc
  *
  */
-public class SayHello extends TickerBehaviour{
+//TODO modifier la superclasse
+public class SayHello extends OneShotBehaviour{
 
 	/**
 	 * 
@@ -24,28 +29,46 @@ public class SayHello extends TickerBehaviour{
 	 *  
 	 */
 	public SayHello (final Agent myagent) {
-		super(myagent, 3000);
-		//super(myagent);
+		super(myagent);
 	}
 
 	@Override
-	public void onTick() {
-		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
-
-		//A message is defined by : a performative, a sender, a set of receivers, (a protocol),(a content (and/or contentOBject))
-		ACLMessage msg=new ACLMessage(ACLMessage.INFORM);
-		msg.setSender(this.myAgent.getAID());
-		msg.setProtocol("UselessProtocol");
-
-		if (myPosition!=""){
-			//System.out.println("Agent "+this.myAgent.getLocalName()+ " is trying to reach its friends");
+	public void action() {
+		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
+		
+		String myPosition=(myagent).getCurrentPosition();
+		
+		DFAgentDescription dfd = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription () ;
+		sd.setType( "ANY" ); // type of the agent
+		dfd.addServices(sd) ;
+		DFAgentDescription[] result;
+		try {
+			result = DFService.search( myagent , dfd);
+			//You get the list of all the agents (AID) of said type
+			
+			
+			//A message is defined by : a performative, a sender, a set of receivers, (a protocol),(a content (and/or contentOBject))
+			ACLMessage msg=new ACLMessage(ACLMessage.INFORM);
+			msg.setSender(myagent.getAID());
+			msg.setProtocol("UselessProtocol");
+			//System.out.println("Agent "+myagent.getLocalName()+ " is trying to reach its friends");
 			msg.setContent("Hello World, I'm at "+myPosition);
 
-			msg.addReceiver(new AID("Collect1",AID.ISLOCALNAME));
-			msg.addReceiver(new AID("Collect2",AID.ISLOCALNAME));
-
+			for (DFAgentDescription dfad : result){
+				if(dfad.getName() != myagent.getAID())
+					msg.addReceiver(dfad.getName());
+			}
+			
 			//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
-			((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
+			((AbstractDedaleAgent)myagent).sendMessage(msg);
+			
+		} catch (FIPAException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
+		
 	}
+
 }
