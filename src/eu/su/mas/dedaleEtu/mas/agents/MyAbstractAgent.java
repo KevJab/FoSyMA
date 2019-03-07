@@ -5,6 +5,7 @@ import java.util.HashMap;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.data.MapInformation;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
+import eu.su.mas.dedaleEtu.mas.object.Node;
 import jade.core.AID;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -62,8 +63,39 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		}
 	}
 	
+	
+	/**************************************************************************
+	 * 																		  *
+	 * Methods from Graphe re-implemented here to access it in the Behaviours *
+	 * 																		  *
+	 **************************************************************************/
+	
+	/**
+	 * Method from Graphe
+	 */
 	public boolean isCompleteMap() {
 		return myMap.isComplete();
+	}
+	
+	/**
+	 * Method from Graphe
+	 */
+	public void addNode(Node n) {
+		myMap.addNode(n);
+	}
+	
+	/**
+	 * Method from Graphe
+	 */
+	public void addNode(String id,int type, int qty){
+		myMap.addNode(id, type, qty);
+	}
+	
+	/**
+	 * Method from Graphe
+	 */
+	public void addAllNeighbours(Node n) {
+		myMap.addAllNeighbours(n);
 	}
 
 }
