@@ -1,7 +1,10 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 
+import java.io.IOException;
+
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -22,18 +25,34 @@ public class WaitBehaviour extends WakerBehaviour {
 	private int type;
 
 	public WaitBehaviour(Agent a, int type) {
+		//TODO maybe 2 seconds of wait is too much
 		super(a, 2000);
 		this.type = type;
-		// TODO Auto-generated constructor stub
 	}
 	
+	/**
+	 * if this is WaitSend, sends a PingResponse (performative ACLMessage.AGREE), else does nothing
+	 */
 	@Override
 	public void onStart() {
+		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
 		if(type == SEND) {
-			//TODO send pingresponse (ACLMessage.AGREE)
+			//1°Create the message
+			final ACLMessage msg = new ACLMessage(ACLMessage.AGREE);
+			msg.setSender(myagent.getAID());
+			msg.addReceiver(new AID(myagent.getInterlocuteur().getLocalName(), AID.ISLOCALNAME));  
+			
+			msg.setContent("PingResponse");
+			myagent.send(msg);
 		}
 	}
 	
+	/**
+	 * Waits for 2 seconds, and checks if the agent received a message. </br>
+	 * <code>endVal</code>'s value will be: <ul><li> 2 if message received </li>
+	 * 											<li> 1 if waited too long</li></ul>
+	 * 
+	 */
 	@Override
 	public void onWake() {
 		int performative;

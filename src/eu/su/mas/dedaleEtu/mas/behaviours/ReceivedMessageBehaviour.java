@@ -36,7 +36,7 @@ public class ReceivedMessageBehaviour extends SimpleBehaviour {
 			HashMap<String, MapInformation> h = ((MyExplorerAgent) myAgent).getHashMap();
 			String name = msg.getSender().getLocalName();
 			if(!h.containsKey(name))
-				//TODO Envoyer tous le graphe a la place d'un MapInfo vide
+				//TODO Envoyer tout le graphe a la place d'un MapInfo vide
 				h.put(name, new MapInformation());
 			System.out.println(this.myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
 		}else{

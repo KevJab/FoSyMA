@@ -32,6 +32,12 @@ public class RandomWalkBehaviour extends OneShotBehaviour{
 		super(myagent);
 	}
 
+	/**
+	 * The agent walks one step (for now randomly, will have to be modified very soon). </br>
+	 * As long as the map is not complete, <code>endVal</code> will be 2 (ie ping + map exchange). </br>
+	 * Otherwise, this will be the last step before becoming an unlocker.
+	 */
+	//TODO not random, target should be an open node
 	@Override
 	public void action() {
 		//Example to retrieve the current position

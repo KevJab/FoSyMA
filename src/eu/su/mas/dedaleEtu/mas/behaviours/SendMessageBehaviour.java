@@ -21,9 +21,11 @@ public class SendMessageBehaviour extends SimpleBehaviour {
 		
 	}
 
+	/**
+	 * <code>this.myAgent</code> sends his map to his "interlocuteur"
+	 */
 	@Override
 	public void action() {
-		// TODO Auto-generated method stub
 
 		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
 		
@@ -37,9 +39,9 @@ public class SendMessageBehaviour extends SimpleBehaviour {
 			
 		//2° compute the random value		
 		try {
+			//TODO Re-do getHashMap method. now: MapInformation; post fix: Graphe
 			msg.setContentObject(myagent.getHashMap());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		myagent.send(msg);
@@ -49,7 +51,6 @@ public class SendMessageBehaviour extends SimpleBehaviour {
 
 	@Override
 	public boolean done() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

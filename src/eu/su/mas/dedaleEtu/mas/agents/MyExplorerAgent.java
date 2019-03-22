@@ -61,9 +61,8 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		//lb.add(new ReceivedMessageBehaviour(this));
 		
 		FSMBehaviour fsm = new FSMBehaviour(this);
-		//TODO to use FSMBehaviour, these events need to redefine the public int onEnd() method
 		//TODO for now, I'm considering all these behaviours work as intended
-		fsm.registerFirstState(new RandomWalkBehaviour(this), "Walk"); 	//onEnd() -> 1 if not fully explored, 2 otherwise; TODO not random, target = open node
+		fsm.registerFirstState(new RandomWalkBehaviour(this), "Walk"); 	//onEnd() -> 1 if not fully explored, 2 otherwise;
 		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.PING), "PingWait");
 		fsm.registerState(new SayHello(this), "PingSend");					
 		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.PINGRESPONSE), "PingResponseWait");				//onEnd() -> 1 if nobody in range, 2 otherwise
@@ -71,7 +70,7 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		fsm.registerState(new ReceivedMessageBehaviour(this), "Receive");
 		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.SEND), "WaitSend");
 		fsm.registerState(new SendMessageBehaviour(this), "Send2");
-		fsm.registerLastState(new MyExploSoloBehaviour(this, myMap), "Explore");	//make it cyclic!; TODO previously myMapRepresentation/MapInfo, translate to Graphe
+		fsm.registerLastState(new MyExploSoloBehaviour(this, myMap), "Explore");	//make it cyclic!
 		
 		fsm.registerTransition("Walk", "Explore", 1);
 		fsm.registerTransition("Walk", "PingWait", 2);
@@ -101,10 +100,6 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
 
-	}
-	
-	public void merge(MyMapRepresentation other_map) {
-		
 	}
 	
 	

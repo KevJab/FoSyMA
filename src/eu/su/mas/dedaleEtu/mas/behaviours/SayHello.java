@@ -48,7 +48,7 @@ public class SayHello extends OneShotBehaviour{
 			
 			
 			//A message is defined by : a performative, a sender, a set of receivers, (a protocol),(a content (and/or contentOBject))
-			ACLMessage msg=new ACLMessage(ACLMessage.INFORM);
+			ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 			msg.setSender(myagent.getAID());
 			msg.setProtocol("UselessProtocol");
 			//System.out.println("Agent "+myagent.getLocalName()+ " is trying to reach its friends");
@@ -63,7 +63,6 @@ public class SayHello extends OneShotBehaviour{
 			((AbstractDedaleAgent)myagent).sendMessage(msg);
 			
 		} catch (FIPAException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
