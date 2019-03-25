@@ -96,11 +96,15 @@ public class Graphe implements Serializable{
 	 * @return <code>true</code> if graph has no more open nodes, <code>false</code> otherwise
 	 */
 	public boolean isComplete() {
-		for(Node n : nodes) {
-			if (!n.isVisited())
-				return false;
+		if(nodes.isEmpty())
+			return false;
+		else {
+			for(Node n : nodes) {
+				if (!n.isVisited())
+					return false;
+			}
+			return true;
 		}
-		return true;
 	}
 	
 }

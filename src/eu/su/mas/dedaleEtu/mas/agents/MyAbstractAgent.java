@@ -17,7 +17,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 
 	protected String type;
 	protected AID interlocuteur = null;
-	protected Graphe myMap;
+	protected Graphe myMap = new Graphe();
 	protected HashMap<String, MapInformation> h = new HashMap<>();
 	
 	public String getType() {

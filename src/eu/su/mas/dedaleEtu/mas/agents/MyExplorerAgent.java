@@ -60,6 +60,8 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		//lb.add(new MyExploSoloBehaviour(this,this.myMap));
 		//lb.add(new ReceivedMessageBehaviour(this));
 		
+		//TODO doesn't work for now because agent 2 doesn't check his mailbox quickly enough
+		
 		FSMBehaviour fsm = new FSMBehaviour(this);
 		//TODO for now, I'm considering all these behaviours work as intended
 		fsm.registerFirstState(new RandomWalkBehaviour(this), "Walk"); 	//onEnd() -> 1 if not fully explored, 2 otherwise;
