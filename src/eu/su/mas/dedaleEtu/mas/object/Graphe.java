@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 
 public class Graphe implements Serializable{
@@ -30,19 +31,24 @@ public class Graphe implements Serializable{
 		return edges;
 	}
 	
+	//TODO Make it add neighbours by copying them
 	public void addNode(Node n) {
 		nodes.add(new Node(n));
 	}
 	
-	public void addNode(String id,int type, int qty){
+	public void addNeighbour(String id,int qtyG, int qtyD, String neighbour){
 		if (this.hasNode(id) == null) {
-			Node n = new Node(id, type, qty);
+			Node n = new Node(id, qtyG, qtyD, neighbour);
 			nodes.add(n);
 		}
 	}
 	
+	/**
+	 * Adds edges for all known neighbours of <i>Node n</i>. Asserts if <b>this</b> knows <i>n</i> beforehand.
+	 * @param n the main node
+	 */
 	public void addAllNeighbours(Node n) {
-		assert this.hasNode(n.getName()) != null: "ce noeud n'existe pas dans le graphe!";
+		assert this.hasNode(n.getName()) != null: "ce noeud n existe pas dans le graphe!";
 		
 		for(String nbr : n.getNeighbours()) {
 			this.addEdges(n.getName(), nbr);
@@ -51,7 +57,7 @@ public class Graphe implements Serializable{
 	
 	public void addEdges(String mainNode, String neighbour) {
 		edges.put(mainNode, neighbour);
-		//edges.put(neighbour, mainNode);
+		edges.put(neighbour, mainNode);
 	}
 	
 	/**
@@ -71,6 +77,7 @@ public class Graphe implements Serializable{
 	 * When encountering another agent, merges both graphs together
 	 * @param other the other agent's graph
 	 */
+	//TODO check if correct, I don't think so
 	public void merge(Graphe other) {
 		Node myNode;
 		for(Node n : other.getNodes()) {
@@ -89,7 +96,6 @@ public class Graphe implements Serializable{
 				myNode.update(n);
 			}
 		}
-			
 	}
 	
 	/** 

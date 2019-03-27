@@ -62,6 +62,8 @@ public class SayHello extends OneShotBehaviour{
 			//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
 			((AbstractDedaleAgent)myagent).sendMessage(msg);
 			
+			System.out.println(this.myAgent.getLocalName()+" says : Hello? anyone here?");
+			
 		} catch (FIPAException e) {
 			e.printStackTrace();
 		}

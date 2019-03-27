@@ -71,19 +71,39 @@ public class WaitBehaviour extends WakerBehaviour {
 			break;
 		}
 		//1) receive the message
-		final MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(performative);			
+		// Template: match corresponding performative and I'm not the sender (I don't want to read my own messages)
+		final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
+		
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {	
 			endVal = 2;	//FSM goes to Send
 			((MyAbstractAgent) this.myAgent).setInterlocuteur(msg.getSender());
+			System.out.println(this.myAgent.getLocalName()+" replied to " + msg.getSender().getLocalName());
 		}else{
+			String wait = "Wait";
+			switch(type) {
+			case PING:
+				wait = "Ping" + wait;
+				break;
+			case PINGRESPONSE:
+				wait = "PingResponse" + wait;
+				break;
+			case SEND:
+				wait = "Send" + wait;
+				break;
+			default:
+				wait = "";
+				break;
+			}
+			System.out.println(this.myAgent.getLocalName()+ " is sad, nobody wants to talk with them; exiting "+ wait + " state");
 			endVal = 1;	//waited too long
 		}
 	}
 	
 	@Override
 	public int onEnd() {
+		reset();
 		return endVal;
 	}
 

@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.object;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Node implements Serializable{
@@ -10,42 +11,52 @@ public class Node implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 3725959494229620330L;
-	public static final int VOID = 0;
-	public static final int GOLD = 1;
-	public static final int DIAMOND = 2;
 	
 	private String name;
-	private int nature;
-	private int quantity;
+	private int quantityG;
+	private int quantityD;
 	private boolean visited;
 	private List<String> neighbours;
+	private Date lastUpdateDate;
 	
-	public Node(String n, int na, int q) {
+	public Node(String n, int qtyGold, int qtyDiam, List<String> nbrs, boolean visit, Date date) {
 		name = n;
-		nature = na;
-		quantity = q;
+		quantityG = qtyGold;
+		quantityD = qtyDiam;
+		visited  = visit;
+		neighbours = nbrs;
+		lastUpdateDate = date;
+	}
+	
+	public Node(String n, int qtyGold, int qtyDiam, String nbr) {
+		name = n;
+		quantityG = qtyGold;
+		quantityD = qtyDiam;
 		visited  = false;
 		neighbours = new ArrayList<>();
+		neighbours.add(nbr);
+		lastUpdateDate = new Date();
 	}
 	
 	public Node(Node other) {
-		name = other.getName();
-		nature = other.getNature();
-		quantity = other.getQuantity();
-		visited = other.isVisited();
-		neighbours = other.getNeighbours();
+		name = other.name;
+		quantityG = other.quantityG;
+		quantityD = other.quantityD;
+		visited = other.visited;
+		neighbours = other.neighbours;
+		lastUpdateDate = other.lastUpdateDate;
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public int getNature() {
-		return nature;
+	public int getQuantityG() {
+		return quantityG;
 	}
 	
-	public int getQuantity() {
-		return quantity;
+	public int getQuantityD() {
+		return quantityD;
 	}
 
 	public boolean isVisited() {
@@ -56,12 +67,12 @@ public class Node implements Serializable{
 		return neighbours;
 	}
 	
-	public void setNature(int n) {
-		nature = n;
+	private void setQuantityG(int q) {
+		quantityG = q;
 	}
 	
-	public void setQuantity(int q) {
-		quantity = q;
+	private void setQuantityD(int q) {
+		quantityD = q;
 	}
 	
 	public void visit() {
@@ -77,7 +88,13 @@ public class Node implements Serializable{
 	 * @param other the same node, in another agent's graph
 	 */
 	public void update(Node other) {
-		//TODO who's right? me or other?
+		if(other.lastUpdateDate.after(this.lastUpdateDate)){
+			quantityG = other.quantityG;
+			quantityD = other.quantityD;
+			visited = other.visited;
+			neighbours = other.neighbours;
+			lastUpdateDate = other.lastUpdateDate;
+		}
 	}
 
 }

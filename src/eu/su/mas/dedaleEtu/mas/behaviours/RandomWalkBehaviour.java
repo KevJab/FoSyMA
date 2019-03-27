@@ -91,10 +91,14 @@ public class RandomWalkBehaviour extends OneShotBehaviour{
 			((AbstractDedaleAgent)this.myAgent).moveTo(lobs.get(moveId).getLeft());
 		}
 
-		if(((MyAbstractAgent) this.myAgent).isCompleteMap()) // if map is finished
+		if(((MyAbstractAgent) this.myAgent).isCompleteMap()) { // if map is finished
 			endVal = 1;
-		else
+			System.out.println(this.myAgent.getLocalName()+" - My map is complete now; let's explore");
+		}
+		else {
+			System.out.println(this.myAgent.getLocalName()+ " - I should continue discovering the world");
 			endVal = 2;
+		}
 	}
 
 	@Override

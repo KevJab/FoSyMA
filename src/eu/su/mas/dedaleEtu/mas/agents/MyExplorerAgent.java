@@ -27,14 +27,6 @@ public class MyExplorerAgent extends MyAbstractAgent {
 	
 	
 	
-
-	public MyExplorerAgent() {
-		super();
-		type = "EXPLORER";
-		
-		register();
-	}
-	
 	/**
 	 * This method is automatically called when "agent".start() is executed.
 	 * Consider that Agent is launched for the first time. 
@@ -48,6 +40,9 @@ public class MyExplorerAgent extends MyAbstractAgent {
 
 		super.setup();
 		
+		type = "EXPLORER";
+		
+		register();
 
 		List<Behaviour> lb=new ArrayList<Behaviour>();
 		
@@ -60,7 +55,6 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		//lb.add(new MyExploSoloBehaviour(this,this.myMap));
 		//lb.add(new ReceivedMessageBehaviour(this));
 		
-		//TODO doesn't work for now because agent 2 doesn't check his mailbox quickly enough
 		
 		FSMBehaviour fsm = new FSMBehaviour(this);
 		//TODO for now, I'm considering all these behaviours work as intended

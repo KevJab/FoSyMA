@@ -8,6 +8,7 @@ import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 public class ReceivedMessageBehaviour extends SimpleBehaviour {
 
@@ -38,7 +39,14 @@ public class ReceivedMessageBehaviour extends SimpleBehaviour {
 			if(!h.containsKey(name))
 				//TODO Envoyer tout le graphe a la place d'un MapInfo vide
 				h.put(name, new MapInformation());
-			System.out.println(this.myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
+			
+			HashMap<String, MapInformation> map = null;
+			try {
+				map = (HashMap<String, MapInformation>) msg.getContentObject();
+			} catch (UnreadableException e) {
+				e.printStackTrace();
+			}
+			System.out.println(this.myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+map.toString());
 		}else{
 			block();// the behaviour goes to sleep until the arrival of a new message in the agent's Inbox.
 		}

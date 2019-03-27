@@ -44,14 +44,14 @@ public class SendMessageBehaviour extends SimpleBehaviour {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		myagent.send(msg);
+		myagent.sendMessage(msg);
 		
 		System.out.println(myagent.getLocalName()+" ----> sent his map to " + myagent.getInterlocuteur().getLocalName());
 	}
 
 	@Override
 	public boolean done() {
-		return false;
+		return true;
 	}
 
 }

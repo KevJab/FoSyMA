@@ -28,10 +28,6 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		return h;
 	}
 	
-	public void setHashMap(HashMap<String, MapInformation> h) {
-		this.h = h;
-	}
-	
 	public void setInterlocuteur(AID ag) {
 		interlocuteur = ag;
 	}
@@ -80,22 +76,11 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	/**
 	 * Method from Graphe
 	 */
-	public void addNode(Node n) {
-		myMap.addNode(n);
-	}
-	
-	/**
-	 * Method from Graphe
-	 */
-	public void addNode(String id,int type, int qty){
-		myMap.addNode(id, type, qty);
-	}
-	
-	/**
-	 * Method from Graphe
-	 */
 	public void addAllNeighbours(Node n) {
 		myMap.addAllNeighbours(n);
 	}
 
+	public void mergeGraphs(MyAbstractAgent other) {
+		myMap.merge(other.myMap);
+	}
 }
