@@ -4,11 +4,13 @@ package eu.su.mas.dedaleEtu.mas.behaviours;
 import java.io.IOException;
 
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
+import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 public class WaitBehaviour extends WakerBehaviour {
 
@@ -72,14 +74,28 @@ public class WaitBehaviour extends WakerBehaviour {
 		}
 		//1) receive the message
 		// Template: match corresponding performative and I'm not the sender (I don't want to read my own messages)
+		//TODO test simple matchperformative
 		final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
 		
+		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {	
 			endVal = 2;	//FSM goes to Send
 			((MyAbstractAgent) this.myAgent).setInterlocuteur(msg.getSender());
-			System.out.println(this.myAgent.getLocalName()+" replied to " + msg.getSender().getLocalName());
+			System.out.println(msg.getSender().getLocalName()+" replied to " + this.myAgent.getLocalName());
+			
+
+			if(type == SEND) {
+				Graphe g = null;
+				try {
+					g = (Graphe) msg.getContentObject();
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+				myagent.mergeGraphs(g);
+				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
+			}
 		}else{
 			String wait = "Wait";
 			switch(type) {

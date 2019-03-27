@@ -54,6 +54,7 @@ public class SayHello extends OneShotBehaviour{
 			//System.out.println("Agent "+myagent.getLocalName()+ " is trying to reach its friends");
 			msg.setContent("Hello World, I'm at "+myPosition);
 
+			// I'm not sending a message to myself
 			for (DFAgentDescription dfad : result){
 				if(dfad.getName() != myagent.getAID())
 					msg.addReceiver(dfad.getName());

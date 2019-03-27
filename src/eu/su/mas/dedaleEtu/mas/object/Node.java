@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import eu.su.mas.dedale.env.Observation;
+import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
+import jade.core.Agent;
+
 public class Node implements Serializable{
 	
 	/**
@@ -19,34 +23,43 @@ public class Node implements Serializable{
 	private List<String> neighbours;
 	private Date lastUpdateDate;
 	
-	public Node(String n, int qtyGold, int qtyDiam, List<String> nbrs, boolean visit, Date date) {
+	/**
+	 * General Node constructor, with all parameters
+	 * @param n the name of the node
+	 * @param qtyGold its quantity of gold
+	 * @param qtyDiam its quantity of diamond
+	 * @param nbrs the list of neighbours
+	 * @param visit whether this node has been visited or not
+	 * @param date its latest update Date
+	 */
+	/*public Node(String n, int qtyGold, int qtyDiam, List<String> nbrs, boolean visit, Date date) {
 		name = n;
 		quantityG = qtyGold;
 		quantityD = qtyDiam;
 		visited  = visit;
 		neighbours = nbrs;
 		lastUpdateDate = date;
-	}
+	}*/
 	
-	public Node(String n, int qtyGold, int qtyDiam, String nbr) {
-		name = n;
-		quantityG = qtyGold;
-		quantityD = qtyDiam;
-		visited  = false;
-		neighbours = new ArrayList<>();
-		neighbours.add(nbr);
-		lastUpdateDate = new Date();
-	}
-	
+	/**
+	 * Creates a new node, with the same characteristics as <code>other</code>
+	 * @param other the node to copy
+	 */
 	public Node(Node other) {
 		name = other.name;
 		quantityG = other.quantityG;
 		quantityD = other.quantityD;
 		visited = other.visited;
-		neighbours = other.neighbours;
 		lastUpdateDate = other.lastUpdateDate;
+		
+		neighbours = new ArrayList<>();
+		for(String nbr : other.neighbours)
+			neighbours.add(nbr);
 	}
 	
+	/* --------------------------
+	 *   Getters 
+	 * --------------------------*/
 	public String getName() {
 		return name;
 	}
@@ -67,24 +80,41 @@ public class Node implements Serializable{
 		return neighbours;
 	}
 	
-	private void setQuantityG(int q) {
-		quantityG = q;
-	}
 	
-	private void setQuantityD(int q) {
-		quantityD = q;
-	}
 	
-	public void visit() {
-		visited = true;
-	}
+	/*-------------------------------
+	 * Methods modifying the Node
+	 * (always updating the date)
+	 *-------------------------------*/
 	
-	public void addNeighbour(String name) {
-		neighbours.add(name);
+	/**
+	 * Updates the node after the agent picked some gold
+	 * @param qty the amount of gold the agent was able to pick (return value from Agent.pick() )
+	 */
+	public void pickGold(int qty) {
+		quantityG -= qty;
+		update();
 	}
 	
 	/**
-	 * Does nothing for now; will have to be implemented (maybe with adding a latest-update time in the node?)
+	 * Updates the node after the agent picked some diamonds
+	 * @param qty the amount of diamonds the agent was able to pick (return value from Agent.pick() )
+	 */
+	public void pickDiam(int qty) {
+		quantityD -= qty;
+		update();
+	}
+	
+	/**
+	 * The agent has visited this Node; sets <code>visited</code> to <b>true</b> and updates <code>lastUpdateDate</code>
+	 */
+	public void visit() {
+		visited = true;
+		update();
+	}
+	
+	/**
+	 * Updates this node with the data of <code>other</code>, if it is more recent
 	 * @param other the same node, in another agent's graph
 	 */
 	public void update(Node other) {
@@ -95,6 +125,12 @@ public class Node implements Serializable{
 			neighbours = other.neighbours;
 			lastUpdateDate = other.lastUpdateDate;
 		}
+	}
+	 /**
+	  * Updates <code>lastUpdateDate</code>
+	  */
+	private void update() {
+		lastUpdateDate = new Date();
 	}
 
 }

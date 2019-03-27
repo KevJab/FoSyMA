@@ -18,15 +18,23 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected String type;
 	protected AID interlocuteur = null;
 	protected Graphe myMap = new Graphe();
-	protected HashMap<String, MapInformation> h = new HashMap<>();
+	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
 	
+	/**
+	 * Returns the agent type
+	 * @return "COLLECTOR", "EXPLORER" or "SILO"
+	 */
 	public String getType() {
 		return type;
 	}
 	
-	public HashMap<String, MapInformation> getHashMap(){
-		return h;
+	public Graphe getMyMap() {
+		return myMap;
 	}
+	
+	/*public HashMap<String, Graphe> getAllAgentsInfo(){
+		return allAgentsInfo;
+	}*/
 	
 	public void setInterlocuteur(AID ag) {
 		interlocuteur = ag;
@@ -73,14 +81,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		return myMap.isComplete();
 	}
 	
-	/**
-	 * Method from Graphe
-	 */
-	public void addAllNeighbours(Node n) {
-		myMap.addAllNeighbours(n);
-	}
-
-	public void mergeGraphs(MyAbstractAgent other) {
-		myMap.merge(other.myMap);
+	public void mergeGraphs(Graphe other) {
+		myMap.merge(other);
 	}
 }

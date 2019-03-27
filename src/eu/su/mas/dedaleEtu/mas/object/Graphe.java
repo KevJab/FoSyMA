@@ -31,24 +31,21 @@ public class Graphe implements Serializable{
 		return edges;
 	}
 	
-	//TODO Make it add neighbours by copying them
-	public void addNode(Node n) {
+	/** adds Node <i>n</i> from another Graphe during merge
+	 *  
+	 * @param n
+	 */
+	private void addNode(Node n) {
 		nodes.add(new Node(n));
-	}
-	
-	public void addNeighbour(String id,int qtyG, int qtyD, String neighbour){
-		if (this.hasNode(id) == null) {
-			Node n = new Node(id, qtyG, qtyD, neighbour);
-			nodes.add(n);
-		}
+		addAllNeighbours(nodes.get(nodes.size()-1));
 	}
 	
 	/**
 	 * Adds edges for all known neighbours of <i>Node n</i>. Asserts if <b>this</b> knows <i>n</i> beforehand.
 	 * @param n the main node
 	 */
-	public void addAllNeighbours(Node n) {
-		assert this.hasNode(n.getName()) != null: "ce noeud n existe pas dans le graphe!";
+	private void addAllNeighbours(Node n) {
+		assert this.hasNode(n.getName()) != null: "ce noeud n'existe pas dans le graphe!";
 		
 		for(String nbr : n.getNeighbours()) {
 			this.addEdges(n.getName(), nbr);
@@ -84,16 +81,9 @@ public class Graphe implements Serializable{
 			// my instance of the same node
 			myNode = this.hasNode(n.getName());
 			if(myNode == null) {
-				this.addNode(n);
+				this.addNode(n);	//this will create a new node in my graph, identical to n, and create the edges to all of n's neighbours (even though I may not know them yet)
 			} else {
-				// if the other has visited node n, I won't have to visit it myself
-				if( n.isVisited() ) {
-					if(myNode != null) {
-						myNode.visit();
-					}
-				}
-				this.addAllNeighbours(n);
-				myNode.update(n);
+				myNode.update(n);	//this will update the data in myNode, if n is more recent
 			}
 		}
 	}

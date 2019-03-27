@@ -2,8 +2,10 @@ package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import java.util.HashMap;
 
+import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import eu.su.mas.dedaleEtu.mas.agents.MyExplorerAgent;
 import eu.su.mas.dedaleEtu.mas.data.MapInformation;
+import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -29,24 +31,27 @@ public class ReceivedMessageBehaviour extends SimpleBehaviour {
 
 
 	public void action() {
+		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
+		
 		//1) receive the message
 		final MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);			
 
-		final ACLMessage msg = this.myAgent.receive(msgTemplate);
+		final ACLMessage msg = myagent.receive(msgTemplate);
 		if (msg != null) {	
-			HashMap<String, MapInformation> h = ((MyExplorerAgent) myAgent).getHashMap();
 			String name = msg.getSender().getLocalName();
-			if(!h.containsKey(name))
-				//TODO Envoyer tout le graphe a la place d'un MapInfo vide
-				h.put(name, new MapInformation());
-			
-			HashMap<String, MapInformation> map = null;
-			try {
-				map = (HashMap<String, MapInformation>) msg.getContentObject();
-			} catch (UnreadableException e) {
-				e.printStackTrace();
+			String interloc = myagent.getInterlocuteur().getLocalName();
+			if(!name.equals(interloc)) {
+				System.out.println(myagent.getLocalName() + " - Hey! "+name+"! C'est pas à toi que je parle, c'est à "+interloc);
+			} else {
+				Graphe g = null;
+				try {
+					g = (Graphe) msg.getContentObject();
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+				myagent.mergeGraphs(g);
+				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
 			}
-			System.out.println(this.myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+map.toString());
 		}else{
 			block();// the behaviour goes to sleep until the arrival of a new message in the agent's Inbox.
 		}
