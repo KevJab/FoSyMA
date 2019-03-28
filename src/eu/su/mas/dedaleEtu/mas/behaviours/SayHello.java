@@ -56,7 +56,8 @@ public class SayHello extends OneShotBehaviour{
 
 			// I'm not sending a message to myself
 			for (DFAgentDescription dfad : result){
-				if(dfad.getName() != myagent.getAID())
+				System.out.println("I am "+ myagent.getAID() + "and the DF tells me about " + dfad.getName());
+				if(!dfad.getName().equals(myagent.getAID()))
 					msg.addReceiver(dfad.getName());
 			}
 			

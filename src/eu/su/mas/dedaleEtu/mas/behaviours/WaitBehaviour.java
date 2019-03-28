@@ -45,7 +45,7 @@ public class WaitBehaviour extends WakerBehaviour {
 			msg.addReceiver(new AID(myagent.getInterlocuteur().getLocalName(), AID.ISLOCALNAME));  
 			
 			msg.setContent("PingResponse");
-			myagent.send(msg);
+			myagent.sendMessage(msg);
 		}
 	}
 	
