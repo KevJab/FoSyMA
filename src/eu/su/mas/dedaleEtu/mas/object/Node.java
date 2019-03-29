@@ -19,6 +19,8 @@ public class Node implements Serializable{
 	private String name;
 	private int quantityG;
 	private int quantityD;
+	private boolean locked; //TODO implement corresponding methods
+	private int strengthNeeded; //TODO implement correponding methods
 	private boolean visited;
 	private List<String> neighbours;
 	private Date lastUpdateDate;
@@ -32,14 +34,14 @@ public class Node implements Serializable{
 	 * @param visit whether this node has been visited or not
 	 * @param date its latest update Date
 	 */
-	/*public Node(String n, int qtyGold, int qtyDiam, List<String> nbrs, boolean visit, Date date) {
+	public Node(String n, int qtyGold, int qtyDiam, List<String> nbrs, boolean visit) {
 		name = n;
 		quantityG = qtyGold;
 		quantityD = qtyDiam;
 		visited  = visit;
 		neighbours = nbrs;
-		lastUpdateDate = date;
-	}*/
+		lastUpdateDate = new Date();
+	}
 	
 	/**
 	 * Creates a new node, with the same characteristics as <code>other</code>
@@ -49,6 +51,8 @@ public class Node implements Serializable{
 		name = other.name;
 		quantityG = other.quantityG;
 		quantityD = other.quantityD;
+		locked = other.locked;
+		strengthNeeded = other.strengthNeeded;
 		visited = other.visited;
 		lastUpdateDate = other.lastUpdateDate;
 		
@@ -71,6 +75,14 @@ public class Node implements Serializable{
 	public int getQuantityD() {
 		return quantityD;
 	}
+	
+	public boolean isLocked() {
+		return locked;
+	}
+	
+	public int strengthNeeded() {
+		return (locked) ? strengthNeeded : 0;
+	}
 
 	public boolean isVisited() {
 		return visited;
@@ -86,6 +98,11 @@ public class Node implements Serializable{
 	 * Methods modifying the Node
 	 * (always updating the date)
 	 *-------------------------------*/
+	
+	public void addNeighbours(List<String> nbrs) {
+		this.neighbours = nbrs;
+		update();
+	}
 	
 	/**
 	 * Updates the node after the agent picked some gold

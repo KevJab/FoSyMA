@@ -93,7 +93,7 @@ public class WaitBehaviour extends WakerBehaviour {
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
-				myagent.mergeGraphs(g);
+				myagent.getMyMap().merge(g);
 				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
 			}
 		}else{
@@ -113,7 +113,7 @@ public class WaitBehaviour extends WakerBehaviour {
 				break;
 			}
 			System.out.println(this.myAgent.getLocalName()+ " is sad, nobody wants to talk with them; exiting "+ wait + " state");
-			endVal = 1;	//waited too long
+			endVal = (myagent.getType().equals("EXPLORER")) ? 1 : 3;	//waited too long; 
 		}
 	}
 	

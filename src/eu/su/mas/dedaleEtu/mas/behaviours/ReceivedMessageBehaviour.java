@@ -49,7 +49,7 @@ public class ReceivedMessageBehaviour extends SimpleBehaviour {
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
-				myagent.mergeGraphs(g);
+				myagent.getMyMap().merge(g);
 				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
 			}
 		}else{

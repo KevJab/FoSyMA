@@ -82,6 +82,18 @@ public class RandomWalkBehaviour extends OneShotBehaviour{
 				List<Couple<String,List<Couple<Observation,Integer>>>> lobs2=((AbstractDedaleAgent)this.myAgent).observe();//myPosition
 				System.out.println(this.myAgent.getLocalName()+" - State of the observations after trying to pick something "+lobs2);
 			}
+			
+			/* Not used anymore; this behaviour was originally a placeholder to see if the FSM worked as intended
+			// Decides what the agent will do next
+			if(((MyAbstractAgent) this.myAgent).isCompleteMap()) { // if map is finished
+				endVal = 1;
+				System.out.println(this.myAgent.getLocalName()+" - My map is complete now; let's explore");
+			}
+			else {
+				System.out.println(this.myAgent.getLocalName()+ " - I should continue discovering the world");
+				endVal = 2;
+			}*/
+			
 
 			//Random move from the current position
 			Random r= new Random();
@@ -91,14 +103,7 @@ public class RandomWalkBehaviour extends OneShotBehaviour{
 			((AbstractDedaleAgent)this.myAgent).moveTo(lobs.get(moveId).getLeft());
 		}
 
-		if(((MyAbstractAgent) this.myAgent).isCompleteMap()) { // if map is finished
-			endVal = 1;
-			System.out.println(this.myAgent.getLocalName()+" - My map is complete now; let's explore");
-		}
-		else {
-			System.out.println(this.myAgent.getLocalName()+ " - I should continue discovering the world");
-			endVal = 2;
-		}
+		
 	}
 
 	@Override

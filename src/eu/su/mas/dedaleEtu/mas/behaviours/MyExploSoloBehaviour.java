@@ -39,8 +39,7 @@ public class MyExploSoloBehaviour extends SimpleBehaviour{
 
 	@Override
 	public void action() {
-		/*
-		//0) Retrieve the current position
+		/*//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 	
 		if (myPosition!=null){

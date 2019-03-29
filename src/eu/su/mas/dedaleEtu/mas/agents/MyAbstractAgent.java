@@ -67,21 +67,4 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		}
 	}
 	
-	
-	/**************************************************************************
-	 * 																		  *
-	 * Methods from Graphe re-implemented here to access it in the Behaviours *
-	 * 																		  *
-	 **************************************************************************/
-	
-	/**
-	 * Method from Graphe
-	 */
-	public boolean isCompleteMap() {
-		return myMap.isComplete();
-	}
-	
-	public void mergeGraphs(Graphe other) {
-		myMap.merge(other);
-	}
 }
