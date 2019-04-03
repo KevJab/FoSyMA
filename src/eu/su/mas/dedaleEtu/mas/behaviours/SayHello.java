@@ -52,7 +52,7 @@ public class SayHello extends OneShotBehaviour{
 			msg.setSender(myagent.getAID());
 			msg.setProtocol("UselessProtocol");
 			//System.out.println("Agent "+myagent.getLocalName()+ " is trying to reach its friends");
-			msg.setContent("Hello World, I'm at "+myPosition);
+			msg.setContent(myagent.getMyMap().getGoal() +","+myagent.getMyMap().getCurPos());
 
 			// I'm not sending a message to myself
 			for (DFAgentDescription dfad : result){

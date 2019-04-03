@@ -21,35 +21,62 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 	public WalkToGoalBehaviour(final MyAbstractAgent myagent, int type) {
 		super(myagent);
 		
-		this.registerFirstState(new WalkBehaviour(myagent, type), "Walk"); 	//onEnd() -> 1 if goal reached, 2 otherwise;
-		this.registerState(new WaitBehaviour(myagent, WaitBehaviour.PING), "PingWait");
-		this.registerState(new SayHello(myagent), "PingSend");					
-		this.registerState(new WaitBehaviour(myagent, WaitBehaviour.PINGRESPONSE), "PingResponseWait");				//onEnd() -> 1 if nobody in range, 2 otherwise
-		this.registerState(new SendMessageBehaviour(myagent), "Send");
-		this.registerState(new ReceivedMessageBehaviour(myagent), "Receive");
-		this.registerState(new WaitBehaviour(myagent, WaitBehaviour.SEND), "SendWait");
-		this.registerState(new SendMessageBehaviour(myagent), "Send2");
-		this.registerLastState(new OneShotBehaviour() {public void action() {}}, "End");	// does nothing, aside terminating the FSM
+		/*------------
+		 * Behaviours
+		 *------------*/
 		
-		this.registerTransition("Walk", "End", 1);
-		this.registerTransition("Walk", "PingWait", 2);
+		// all SetGoalBehaviours
+		this.registerFirstState(new SetGoalBehaviour(myagent, type, SetGoalBehaviour.INIT), "SetGoal"); 	//onEnd() -> 1 if goal reached, 2 otherwise;
+		this.registerState(new SetGoalBehaviour(myagent, type, SetGoalBehaviour.RECEIVER), "ResetGoalR"); 	// the ping receiver (R) checks if he needs to update his next step
+		this.registerState(new SetGoalBehaviour(myagent, type, SetGoalBehaviour.SENDER), "ResetGoalS"); 	// the ping sender (S) needs to update his next step
+		
+		// all WaitBehaviours (onEnd = 1 if waited too long, 2 otherwise)
+		this.registerState(new WaitBehaviour(myagent, WaitBehaviour.PING), "PingWait");						// the agent checks if someone is nearby and talking
+		this.registerState(new WaitBehaviour(myagent, WaitBehaviour.PINGRESPONSE), "PingResponseWait");		// the agent said hello and checks if someone nearby replies
+		this.registerState(new WaitBehaviour(myagent, WaitBehaviour.SEND), "SendWait");						// the agent heard "hello" and replied; waits for the other guy to send his map
+		
+		// all map-exchanging behaviours (receiving/sending)
+		this.registerState(new SendMessageBehaviour(myagent), "Send");			// the initial talker sends his map
+		this.registerState(new ReceivedMessageBehaviour(myagent), "Receive");	// the initial talker receives his map
+		this.registerState(new SendMessageBehaviour(myagent), "Send2");			// the respondent sends his map
+		
+		// walking one step closer to the goal
+		this.registerState(new WalkBehaviour(myagent, type), "Walk"); 	
+		
+		// pretty self explanatory; says hello, sending (wish_node, cur_node)
+		this.registerState(new SayHello(myagent), "PingSend");					
+		
+		// this behaviour does nothing else other than terminate the FSM
+		this.registerLastState(new OneShotBehaviour() {public void action() {}}, "End");
+		
+		
+		/*-------------
+		 * Transitions
+		 *-------------*/
+		
+		this.registerTransition("SetGoal", "End", 1);
+		this.registerTransition("SetGoal", "PingWait", 2);
 		
 		this.registerTransition("PingWait", "PingSend", 1);
-		this.registerTransition("PingWait", "SendWait", 2);
-		this.registerTransition("PingWait", "Walk", 3);
+		this.registerTransition("PingWait", "ResetGoalR", 2);
 		
 		this.registerTransition("PingResponseWait", "Walk", 1);
 		this.registerTransition("PingResponseWait", "Send", 2);
-		// no need to add a state with return value 3 since non-explorers will never get to the PingResponseWait state
+		this.registerTransition("PingResponseWait", "ResetGoalS", 3);
 		
 		this.registerTransition("SendWait", "PingSend", 1);
 		this.registerTransition("SendWait", "Send2", 2);
-		this.registerTransition("SendWait", "Walk", 3);
 		
-		this.registerDefaultTransition("PingSend", "PingResponseWait");
-		this.registerDefaultTransition("Send", "Receive");
+		this.registerTransition("Walk", "SetGoal", 1);
+		this.registerTransition("Walk", "PingWait", 2);
+		
 		this.registerDefaultTransition("Receive", "Walk");
 		this.registerDefaultTransition("Send2", "Walk");
+		this.registerDefaultTransition("PingSend", "PingResponseWait");
+		this.registerDefaultTransition("Send", "Receive");
+		this.registerDefaultTransition("ResetGoalR", "SendWait");
+		this.registerDefaultTransition("ResetGoalS", "Send");
+		
 	}
 	
 

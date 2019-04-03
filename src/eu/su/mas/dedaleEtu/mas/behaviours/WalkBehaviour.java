@@ -108,8 +108,9 @@ public class WalkBehaviour extends SimpleBehaviour {
 				myMap.addNode(nbr, qtyG_nbr, qtyD_nbr, new ArrayList<>(), false);
 			}
 			myMap.addNode(myPosition, qtyG, qtyD, nbrs, true);
-			myMap.setMyPos(new Node(myPosition, qtyG, qtyD, nbrs, true));
-			((MyAbstractAgent)this.myAgent).getMyMap().setNewGoal(type);
+			myMap.setMyPos(myPosition);
+			//TODO don't do that here
+			myMap.setNewGoal(type);
 			
 			
 			
@@ -126,6 +127,6 @@ public class WalkBehaviour extends SimpleBehaviour {
 	
 	@Override
 	public int onEnd() {
-		return (((MyAbstractAgent)this.myAgent).getMyMap().isReached()) ? 1 : 2;
+		return (hasMoved) ? 1 : 2;
 	}
 }

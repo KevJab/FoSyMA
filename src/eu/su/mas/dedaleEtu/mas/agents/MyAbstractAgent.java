@@ -17,6 +17,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 
 	protected String type;
 	protected AID interlocuteur = null;
+	protected String[] otherInfo = new String[2];
 	protected Graphe myMap = new Graphe();
 	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
 	
@@ -42,6 +43,21 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	
 	public AID getInterlocuteur() {
 		return interlocuteur;
+	}
+	
+	public void setOtherInfo(String other_wish_node, String other_cur_node) {
+		otherInfo[0] = other_wish_node;
+		otherInfo[1] = other_cur_node;
+	}
+	
+	/**
+	 * returns the String array <i>info</i> for the other agent (the one with <code>AID</code> <b>interlocuteur</b>), containing: 
+	 * <ul><li>at index 0, where the other agent wants to go next</li>
+	 * <li>at index 1, where the other agent is</li></ul>
+	 * @return
+	 */
+	public String[] getOtherInfo() {
+		return otherInfo;
 	}
 	
 	public void register() {

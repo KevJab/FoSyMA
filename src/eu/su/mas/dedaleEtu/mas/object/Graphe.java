@@ -70,12 +70,31 @@ public class Graphe implements Serializable{
 		return nodes;
 	}
 	
+	/** 
+	 * Method that gets the node named <i>name</i>.
+	 * @param name - a <code>String</code> representing the node's name (it's his node_id)
+	 * @return the corresponding node object
+	 */
+	private Node getNode(String name) {
+		for(Node n : nodes) {
+			if(n.getName().equals(name)) {
+				return n;
+			}
+		}
+		return null;
+	}
+	
 	public HashMap<String, Set<String>> getEdges(){
 		return edges;
 	}
 	
-	public boolean isReached() {
+	public boolean goalReached() {
 		return reached;
+	}
+	
+
+	public String getCurPos() {
+		return myPos.getName();
 	}
 	
 	// This should only be used for testing and printing
@@ -87,6 +106,11 @@ public class Graphe implements Serializable{
 	public void setMyPos(Node n) {
 		myPos = n;
 	}
+	
+	public void setMyPos(String name) {
+		myPos = getNode(name);
+	}
+	
 	/* -----------------
 	 *  Private methods
 	 * -----------------*/
@@ -204,8 +228,8 @@ public class Graphe implements Serializable{
 					condition = false;
 					break;
 				}
-				
-				if ((condition)&&(myNode.equals(goalNode))) { // if the goal has been visited by the other agent
+				//TODO redo this; setNewGoal should be called after each step
+				if ((condition)||(myNode.equals(goalNode))) { // if the goal has been visited by the other agent
 					setNewGoal(goalType);
 				}
 			}
@@ -213,8 +237,8 @@ public class Graphe implements Serializable{
 	}
 	
 	/**
-	 * Chooses a new goal node, being always the closest unvisited node to my current position (A* algorithm)
-	 * @return <code>true</code> if a new open node has been selected as the goal, <code>false</code> if the graph is complete 
+	 * Chooses a new goal node, being always the closest goal node to my current position (Manhattan distance)
+	 * @param goalType - The agent's goal type. It will influence the type of goal nodes.
 	 */
 	public void setNewGoal(int goalType) {
 		if(nodes.isEmpty()) {	// if I have nowhere to go, I can't do anything
@@ -296,6 +320,15 @@ public class Graphe implements Serializable{
 	 * The agent has moved to the next step on his path, so shortestPath's first item is removed. If it gets empty, the goal is reached. </br>
 	 * Should only be called if <code>AbstractDedaleAgent.moveTo(...)</code> returns <code>true</code>
 	 */
+	/* Old move
+	public void move() {
+		myPos = shortestPath.get(0);
+		shortestPath.remove(myPos);
+		
+		if(shortestPath.isEmpty())
+			reached = true;
+		
+	}*/
 	public void move() {
 		goalNode.getName();
 		
