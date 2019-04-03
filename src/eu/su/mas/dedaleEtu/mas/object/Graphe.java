@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 
 /**
@@ -31,13 +33,13 @@ public class Graphe implements Serializable{
 	private HashMap<String, Set<String>> edges;
 	
 	// parameters needed to implement A-Star
+	//FIXME COME BACK ON MYPOS
 	private Node myPos;
 	private Node goalNode; 
 	private List<Node> shortestPath;
 	private boolean reached;
 	private int goalType;
-	private List<Node> openNodes;
-	private List<Node> closedNodes;
+	private List<Node> forbiddenNodes;
 	
 	/* ----------------
 	 *   Constructors
@@ -46,6 +48,7 @@ public class Graphe implements Serializable{
 	public Graphe() {
 		nodes = new HashSet<>();
 		edges = new HashMap<>();
+		forbiddenNodes = new ArrayList<>();
 		goalNode = null;
 		reached = false;
 	}
@@ -80,6 +83,10 @@ public class Graphe implements Serializable{
 		return goalNode.getName();
 	}
 	
+	
+	public void setMyPos(Node n) {
+		myPos = n;
+	}
 	/* -----------------
 	 *  Private methods
 	 * -----------------*/
@@ -91,8 +98,10 @@ public class Graphe implements Serializable{
 	private void addAllNeighbours(Node n) {
 		assert this.hasNode(n.getName()) != null: "ce noeud n'existe pas dans le graphe!";
 		
-		for(String nbr : n.getNeighbours()) {
-			this.addEdges(n.getName(), nbr);
+		if(n.getNeighbours() != null) {
+			for(String nbr : n.getNeighbours()) {
+				this.addEdges(n.getName(), nbr);
+			}
 		}
 	}
 	
@@ -208,29 +217,70 @@ public class Graphe implements Serializable{
 	 * @return <code>true</code> if a new open node has been selected as the goal, <code>false</code> if the graph is complete 
 	 */
 	public void setNewGoal(int goalType) {
-		if(nodes.isEmpty())	// if I have nowhere to go, I can't do anything
+		if(nodes.isEmpty()) {	// if I have nowhere to go, I can't do anything
+			System.out.println("CPUOCOUCO" + myPos);
+			goalNode = myPos;
 			return;
-		
+		}
 		
 		reached = false;
 		this.goalType = goalType;
-		this.openNodes = this.getNeighbourNodes(myPos);
-		this.closedNodes = new ArrayList<>();
+		
 		
 		List<Node> potentialGoals = new ArrayList<>();
-		for (Node n : nodes) {
-			if((goalType == WalkToGoalBehaviour.OPEN) && (!n.isVisited()))
+		List<Node> visited = new ArrayList<Node>();
+		HashMap<Node, Node> predecessors = new HashMap<>();
+		HashMap<Node, Integer> dist = new HashMap<>();
+		List<Node> dejavu = new ArrayList<>();
+		dejavu.add(myPos);
+		int current_dist = 0;
+		visited.add(myPos);
+		while(visited.size() > 0) {
+			System.out.println("a");
+			Node current = visited.get(0);
+			visited.remove(current);
+			current_dist++;
+			for(Node n : getNeighbourNodes(current)) {
+				if((goalType == WalkToGoalBehaviour.OPEN) && (!n.isVisited())) {
 					potentialGoals.add(n);
-			else if(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.GOLD)) && (n.getQuantityG() != 0))
-				potentialGoals.add(n);
-			else if(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getQuantityD() != 0))
-				potentialGoals.add(n);
+					dist.put(n, current_dist);
+				}
+				else if(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.GOLD)) && (n.getQuantityG() != 0)) {
+					potentialGoals.add(n);
+					dist.put(n, current_dist);
+				}
+				else if(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getQuantityD() != 0)) {
+					potentialGoals.add(n);
+					dist.put(n, current_dist);
+				}
 				
+				if(!dejavu.contains(n)) {
+					visited.add(n);
+					dejavu.add(n);
+					predecessors.put(n, current);
+				}
+			}
 		}
 		
-		for(Node n : potentialGoals) {
-			//FIXME Add A* and find the closest potential goal to become goalNode
+		int minDist = 1000000000;
+		Node minNode = null;;
+		for(Node n : dist.keySet()) {
+			if(!forbiddenNodes.contains(n)) {
+				if(dist.get(n) < minDist) {
+					minDist = dist.get(n);
+					minNode = n;
+				}
+			}
 		}
+		goalNode = minNode;
+
+		if(goalNode != myPos) {
+			while(!predecessors.get(goalNode).getName().equals(myPos.getName())) {
+				System.out.println("a");
+				goalNode = predecessors.get(goalNode);
+			}
+		}
+		System.out.println("Next move : " + goalNode.getName());
 	}
 	
 	/**
@@ -239,7 +289,7 @@ public class Graphe implements Serializable{
 	 */
 	//TODO doesn't handle deadlocks (agent 1 on tile 1 wants to go to tile 2, agent 2 on tile 2 wants to go to tile 1)
 	public String getNextTile(){
-		return shortestPath.get(0).getName();
+		return goalNode.getName();
 	}
 	
 	/**
@@ -247,11 +297,7 @@ public class Graphe implements Serializable{
 	 * Should only be called if <code>AbstractDedaleAgent.moveTo(...)</code> returns <code>true</code>
 	 */
 	public void move() {
-		myPos = shortestPath.get(0);
-		shortestPath.remove(myPos);
-		
-		if(shortestPath.isEmpty())
-			reached = true;
+		goalNode.getName();
 		
 	}
 }

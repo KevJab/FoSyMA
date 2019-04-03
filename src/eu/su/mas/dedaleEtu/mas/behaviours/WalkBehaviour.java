@@ -8,6 +8,7 @@ import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
+import eu.su.mas.dedaleEtu.mas.object.Node;
 import jade.core.behaviours.SimpleBehaviour;
 
 /**
@@ -28,15 +29,16 @@ public class WalkBehaviour extends SimpleBehaviour {
 	
 	private static final long serialVersionUID = 2584222096382769904L;
 	private boolean hasMoved = false;
+	int type;
 	
 	public WalkBehaviour(MyAbstractAgent agent, int type) {
-		((MyAbstractAgent)this.myAgent).getMyMap().setNewGoal(type);
+		super(agent);
+		this.type = type;
 	}
 
 	@Override
 	public void action() {
 		Graphe myMap = ((MyAbstractAgent)this.myAgent).getMyMap();
-		
 		// if at the last call of this behaviour, the agent had moved, updates the shortestPath in the graph
 		if(hasMoved) {
 			myMap.move();
@@ -103,9 +105,12 @@ public class WalkBehaviour extends SimpleBehaviour {
 					}
 				}
 				
-				myMap.addNode(nbr, qtyG_nbr, qtyD_nbr, null, false);
+				myMap.addNode(nbr, qtyG_nbr, qtyD_nbr, new ArrayList<>(), false);
 			}
 			myMap.addNode(myPosition, qtyG, qtyD, nbrs, true);
+			myMap.setMyPos(new Node(myPosition, qtyG, qtyD, nbrs, true));
+			((MyAbstractAgent)this.myAgent).getMyMap().setNewGoal(type);
+			
 			
 			
 			//The move action (if any) should be the last action of your behaviour
