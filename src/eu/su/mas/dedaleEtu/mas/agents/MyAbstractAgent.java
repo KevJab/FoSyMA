@@ -19,6 +19,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected AID interlocuteur = null;
 	protected String[] otherInfo = new String[2];
 	protected Graphe myMap = new Graphe();
+	protected boolean youMove = false;
 	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
 	
 	/**
@@ -58,6 +59,14 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	 */
 	public String[] getOtherInfo() {
 		return otherInfo;
+	}
+	
+	public boolean doYouMove() {
+		return youMove;
+	}
+	
+	public void setYouMove(boolean value) {
+		youMove = value;
 	}
 	
 	public void register() {

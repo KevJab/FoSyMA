@@ -61,6 +61,25 @@ public class Node implements Serializable{
 			neighbours.add(nbr);
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		
+		// If the object is compared with itself then return true   
+        if (other == this) { 
+            return true; 
+        } 
+  
+        /* Check if o is an instance of Complex or not 
+          "null instanceof [type]" also returns false */
+        if (!(other instanceof Node)) { 
+            return false; 
+        } 
+        
+        Node n = (Node) other;
+		
+		return this.name.equals(n.name);
+	}
+	
 	/* --------------------------
 	 *   Getters 
 	 * --------------------------*/

@@ -41,8 +41,8 @@ public class WaitBehaviour extends WakerBehaviour {
 			final ACLMessage msg = new ACLMessage(ACLMessage.AGREE);
 			msg.setSender(myagent.getAID());
 			msg.addReceiver(new AID(myagent.getInterlocuteur().getLocalName(), AID.ISLOCALNAME));  
-			//FIXME change this into useful information
-			msg.setContent("PingResponse");
+			
+			msg.setContent(myagent.doYouMove() + "," + myagent.getMyMap().getGoal() + ","+ myagent.getMyMap().getMyPos());
 			myagent.sendMessage(msg);
 		}
 	}

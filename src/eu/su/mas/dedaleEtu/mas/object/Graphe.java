@@ -33,10 +33,8 @@ public class Graphe implements Serializable{
 	private HashMap<String, Set<String>> edges;
 	
 	// parameters needed to implement A-Star
-	//FIXME COME BACK ON MYPOS
 	private Node myPos;
 	private Node goalNode; 
-	private List<Node> shortestPath;
 	private boolean reached;
 	private int goalType;
 	private List<Node> forbiddenNodes;
@@ -49,6 +47,7 @@ public class Graphe implements Serializable{
 		nodes = new HashSet<>();
 		edges = new HashMap<>();
 		forbiddenNodes = new ArrayList<>();
+		myPos = null;
 		goalNode = null;
 		reached = false;
 	}
@@ -66,6 +65,10 @@ public class Graphe implements Serializable{
 	 *    Getters
 	 * -------------*/
 	
+	/**
+	 * Usual getter for <code>Set&ltNode&gt nodes</code> parameter
+	 * @return the parameter <i>nodes</i>, comprised by all nodes currently known by the agent
+	 */
 	public Set<Node> getNodes(){
 		return nodes;
 	}
@@ -88,12 +91,16 @@ public class Graphe implements Serializable{
 		return edges;
 	}
 	
+	/**
+	 * Tells you if the agent reached a <i>goalType</i> type of node. Is only called after the move has been made.
+	 * @return true if <code>myPos</code> is a goal type node, false otherwise
+	 */
 	public boolean goalReached() {
 		return reached;
 	}
 	
 
-	public String getCurPos() {
+	public String getMyPos() {
 		return myPos.getName();
 	}
 	
@@ -127,26 +134,6 @@ public class Graphe implements Serializable{
 				this.addEdges(n.getName(), nbr);
 			}
 		}
-	}
-	
-	/**
-	 * Adds edges (<i>nodeX</i>, <i>nodeY</i>) and (<i>nodeY</i>, <i>nodeX</i>) to <b>edges</b>
-	 * @param nodeX one end of the edge to add
-	 * @param nodeY the other end of the edge
-	 */
-	private void addEdges(String nodeX, String nodeY) {
-		Set<String> edgesX = edges.get(nodeX);
-		if(edgesX == null)
-			edgesX = new HashSet<>();
-		edgesX.add(nodeY);
-		
-		Set<String> edgesY = edges.get(nodeY);
-		if(edgesY == null)
-			edgesY = new HashSet<>();
-		edgesY.add(nodeX);
-		
-		edges.put(nodeX, edgesX);
-		edges.put(nodeY, edgesY);
 	}
 	
 	/**
@@ -184,14 +171,41 @@ public class Graphe implements Serializable{
 	 */
 	public void addNode(Node n) {
 		Node newNode = new Node(n);
+		if (nodes.isEmpty()) {		// should only happen at the very first iteration
+			myPos = newNode;
+		}
+		
 		nodes.add(newNode);
 		addAllNeighbours(newNode); 
 	}
 	
 	public void addNode(String n, int qtyGold, int qtyDiam, List<String> nbrs, boolean visit) {
 		Node newNode = new Node(n, qtyGold, qtyDiam, nbrs, visit);
-		nodes.add(newNode);
-		addAllNeighbours(newNode);
+		this.addNode(newNode);
+	}
+	
+	public void addNode(String n, int qtyGold, int qtyDiam, boolean visit) {
+		this.addNode(n, qtyGold, qtyDiam, new ArrayList<>(), visit);
+	}
+	
+	/**
+	 * Adds edges (<i>nodeX</i>, <i>nodeY</i>) and (<i>nodeY</i>, <i>nodeX</i>) to <b>edges</b>
+	 * @param nodeX one end of the edge to add
+	 * @param nodeY the other end of the edge
+	 */
+	public void addEdges(String nodeX, String nodeY) {
+		Set<String> edgesX = edges.get(nodeX);
+		if(edgesX == null)
+			edgesX = new HashSet<>();
+		edgesX.add(nodeY);
+		
+		Set<String> edgesY = edges.get(nodeY);
+		if(edgesY == null)
+			edgesY = new HashSet<>();
+		edgesY.add(nodeX);
+		
+		edges.put(nodeX, edgesX);
+		edges.put(nodeY, edgesY);
 	}
 	
 	/**
@@ -236,12 +250,18 @@ public class Graphe implements Serializable{
 		}
 	}
 	
+	private boolean isGoalType(Node n) {
+		return ((goalType == WalkToGoalBehaviour.OPEN) && (!n.isVisited()))|| 
+				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.GOLD)) && (n.getQuantityG() != 0)) || 
+				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getQuantityD() != 0));
+	}
+	
 	/**
 	 * Chooses a new goal node, being always the closest goal node to my current position (Manhattan distance)
 	 * @param goalType - The agent's goal type. It will influence the type of goal nodes.
 	 */
 	public void setNewGoal(int goalType) {
-		if(nodes.isEmpty()) {	// if I have nowhere to go, I can't do anything
+		if(nodes.isEmpty()) {	// if I have nowhere to go, I can't do anything; should only be called by the very first setNewGoal
 			System.out.println("CPUOCOUCO" + myPos);
 			goalNode = myPos;
 			return;
@@ -251,59 +271,58 @@ public class Graphe implements Serializable{
 		this.goalType = goalType;
 		
 		
-		List<Node> potentialGoals = new ArrayList<>();
-		List<Node> visited = new ArrayList<Node>();
-		HashMap<Node, Node> predecessors = new HashMap<>();
-		HashMap<Node, Integer> dist = new HashMap<>();
-		List<Node> dejavu = new ArrayList<>();
+		List<Node> potentialGoals = new ArrayList<>();	// a list of potential goal nodes
+		List<Node> toVisit = new ArrayList<>();			// a list of all open nodes 
+		HashMap<Node, Node> predecessors = new HashMap<>();	// for each visited node, how did we get there?
+		HashMap<Node, Integer> dist = new HashMap<>();		// for each potential goal, its distance to myPos (Manhattan)
+		List<Node> dejavu = new ArrayList<>();				// a list of closed nodes
 		dejavu.add(myPos);
 		int current_dist = 0;
-		visited.add(myPos);
-		while(visited.size() > 0) {
-			System.out.println("a");
-			Node current = visited.get(0);
-			visited.remove(current);
+		toVisit.add(myPos);
+		if(this.isGoalType(myPos)) {
+			potentialGoals.add(myPos);
+			dist.put(myPos, current_dist);
+		}
+		//TODO why not check if myPos is a potential goal?
+		while(toVisit.size() > 0) {
+			Node current = toVisit.get(0);
+			toVisit.remove(current);
 			current_dist++;
 			for(Node n : getNeighbourNodes(current)) {
-				if((goalType == WalkToGoalBehaviour.OPEN) && (!n.isVisited())) {
-					potentialGoals.add(n);
-					dist.put(n, current_dist);
-				}
-				else if(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.GOLD)) && (n.getQuantityG() != 0)) {
-					potentialGoals.add(n);
-					dist.put(n, current_dist);
-				}
-				else if(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getQuantityD() != 0)) {
+				if(this.isGoalType(n)) {
 					potentialGoals.add(n);
 					dist.put(n, current_dist);
 				}
 				
 				if(!dejavu.contains(n)) {
-					visited.add(n);
+					toVisit.add(n);
 					dejavu.add(n);
 					predecessors.put(n, current);
 				}
 			}
 		}
 		
-		int minDist = 1000000000;
-		Node minNode = null;;
+		int minDist = Integer.MAX_VALUE;		// simulate minDist = +infinite
+		Node minNode = null;
 		for(Node n : dist.keySet()) {
-			if(!forbiddenNodes.contains(n)) {
+			//FIXME it never goes to here
+			if(!forbiddenNodes.contains(n)) {	// if Node n is not forbidden by the other agent
+				System.out.println("There is a potential goal");
 				if(dist.get(n) < minDist) {
 					minDist = dist.get(n);
 					minNode = n;
 				}
 			}
 		}
-		goalNode = minNode;
-
-		if(goalNode != myPos) {
-			while(!predecessors.get(goalNode).getName().equals(myPos.getName())) {
+		goalNode = (minNode != null) ? minNode : myPos;		// goalNode is now the nearest not forbidden potential goal node, or myPos if there are no nodes to see
+		
+		if(!goalNode.equals(myPos)) {
+			while(!predecessors.get(goalNode).equals(myPos)) {
 				System.out.println("a");
 				goalNode = predecessors.get(goalNode);
 			}
 		}
+		System.out.println("My Position: "+myPos.getName());
 		System.out.println("Next move : " + goalNode.getName());
 	}
 	
@@ -329,8 +348,15 @@ public class Graphe implements Serializable{
 			reached = true;
 		
 	}*/
+	//TODO check if goalnode needs to be reset, and other things too (like forbidden)
 	public void move() {
-		goalNode.getName();
+		myPos = goalNode;
+		// if I am now on a [goalType] type of Node, I have reached my goal
+		if(this.isGoalType(myPos)){
+			reached = true;	
+		}
 		
+		myPos.isVisited();
+		forbiddenNodes.clear();
 	}
 }
