@@ -32,7 +32,7 @@ public class Graphe implements Serializable{
 	private Set<Node> nodes;
 	private HashMap<String, Set<String>> edges;
 	
-	// parameters needed to implement A-Star
+	// parameters needed to implement nearest goal search
 	private Node myPos;
 	private Node goalNode; 
 	private boolean reached;

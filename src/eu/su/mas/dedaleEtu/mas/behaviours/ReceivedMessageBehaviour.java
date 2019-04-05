@@ -52,6 +52,7 @@ public class ReceivedMessageBehaviour extends SimpleBehaviour {
 				myagent.getMyMap().merge(g);
 				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
 			}
+			finished = true;
 		}else{
 			block();// the behaviour goes to sleep until the arrival of a new message in the agent's Inbox.
 		}
