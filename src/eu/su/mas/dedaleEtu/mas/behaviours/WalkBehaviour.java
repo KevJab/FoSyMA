@@ -56,6 +56,7 @@ public class WalkBehaviour extends SimpleBehaviour {
 	
 	@Override
 	public int onEnd() {
+		((MyAbstractAgent)this.myAgent).getMyMap().move(hasMoved);
 		return (hasMoved) ? 1 : 2;
 	}
 }

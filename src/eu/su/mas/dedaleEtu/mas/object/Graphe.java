@@ -96,7 +96,11 @@ public class Graphe implements Serializable{
 	 * @return true if <code>myPos</code> is a goal type node, false otherwise
 	 */
 	public boolean goalReached() {
-		return reached;
+		boolean reachedValue = reached;
+		if (reached) 
+			System.out.println("Yay! I've reached my goal!");
+		reached = false;	// to reset the value of reached
+		return reachedValue;
 	}
 	
 
@@ -134,6 +138,7 @@ public class Graphe implements Serializable{
 				this.addEdges(n.getName(), nbr);
 			}
 		}
+		//System.out.println("listing all edges: " + edges);
 	}
 	
 	/**
@@ -152,6 +157,7 @@ public class Graphe implements Serializable{
 	private List<Node> getNeighbourNodes(Node n){
 		List<Node> nbrs = new ArrayList<>();
 		List<String> nbrName = n.getNeighbours();
+		System.out.println("my neighbours are " + nbrName);
 		for(Node node : nodes) {
 			if(nbrName.contains(node.getName()))
 				nbrs.add(node);
@@ -174,7 +180,8 @@ public class Graphe implements Serializable{
 		if (nodes.isEmpty()) {		// should only happen at the very first iteration
 			myPos = newNode;
 		}
-		
+		if(nodes.contains(newNode))
+			return;
 		nodes.add(newNode);
 		addAllNeighbours(newNode); 
 	}
@@ -194,18 +201,24 @@ public class Graphe implements Serializable{
 	 * @param nodeY the other end of the edge
 	 */
 	public void addEdges(String nodeX, String nodeY) {
-		Set<String> edgesX = edges.get(nodeX);
-		if(edgesX == null)
+		Set<String> edgesX;
+		if(edges.containsKey(nodeX))
+			edgesX = edges.get(nodeX);
+		else
 			edgesX = new HashSet<>();
 		edgesX.add(nodeY);
 		
-		Set<String> edgesY = edges.get(nodeY);
-		if(edgesY == null)
+		Set<String> edgesY;
+		if(edges.containsKey(nodeY))
+			edgesY = edges.get(nodeY);
+		else
 			edgesY = new HashSet<>();
 		edgesY.add(nodeX);
 		
 		edges.put(nodeX, edgesX);
 		edges.put(nodeY, edgesY);
+		
+		this.getNode(nodeX).addNeighbour(nodeY);
 	}
 	
 	/**
@@ -283,18 +296,20 @@ public class Graphe implements Serializable{
 			potentialGoals.add(myPos);
 			dist.put(myPos, current_dist);
 		}
-		//TODO why not check if myPos is a potential goal?
 		while(toVisit.size() > 0) {
+			System.out.println("Iteration; size = "+toVisit.size());
 			Node current = toVisit.get(0);
 			toVisit.remove(current);
 			current_dist++;
 			for(Node n : getNeighbourNodes(current)) {
+				System.out.println("neighbours");
 				if(this.isGoalType(n)) {
 					potentialGoals.add(n);
 					dist.put(n, current_dist);
 				}
 				
 				if(!dejavu.contains(n)) {
+					System.out.println("adding said neighbour");
 					toVisit.add(n);
 					dejavu.add(n);
 					predecessors.put(n, current);
@@ -305,7 +320,6 @@ public class Graphe implements Serializable{
 		int minDist = Integer.MAX_VALUE;		// simulate minDist = +infinite
 		Node minNode = null;
 		for(Node n : dist.keySet()) {
-			//FIXME it never goes to here
 			if(!forbiddenNodes.contains(n)) {	// if Node n is not forbidden by the other agent
 				System.out.println("There is a potential goal");
 				if(dist.get(n) < minDist) {
@@ -316,7 +330,13 @@ public class Graphe implements Serializable{
 		}
 		goalNode = (minNode != null) ? minNode : myPos;		// goalNode is now the nearest not forbidden potential goal node, or myPos if there are no nodes to see
 		
+		System.out.println("I'm at "+myPos.getName()+"; I wanna go to "+goalNode.getName());
 		if(!goalNode.equals(myPos)) {
+			System.out.println("I'm in...");
+			//FIXME it seems like predecessors.get(goalNode) returns null, hence a NullPointerException
+			// This comes from minNode == null, making me do goalNode = myPos
+			if(predecessors.get(goalNode) == null)
+				System.out.println("as I thought...");
 			while(!predecessors.get(goalNode).equals(myPos)) {
 				System.out.println("a");
 				goalNode = predecessors.get(goalNode);
@@ -330,7 +350,6 @@ public class Graphe implements Serializable{
 	 * Used to give the next tile's name to the WalkBehaviour, to be used in the call of <code>AbstractDedaleAgent.moveTo(...)</code>
 	 * @return the nodeId of the next tile to visit
 	 */
-	//TODO doesn't handle deadlocks (agent 1 on tile 1 wants to go to tile 2, agent 2 on tile 2 wants to go to tile 1)
 	public String getNextTile(){
 		return goalNode.getName();
 	}
@@ -349,14 +368,39 @@ public class Graphe implements Serializable{
 		
 	}*/
 	//TODO check if goalnode needs to be reset, and other things too (like forbidden)
-	public void move() {
-		myPos = goalNode;
-		// if I am now on a [goalType] type of Node, I have reached my goal
-		if(this.isGoalType(myPos)){
-			reached = true;	
+	public void move(boolean hasMoved) {
+		if(hasMoved) {
+			myPos.visit();
+			myPos = goalNode;
+			// if I am now on a [goalType] type of Node, I have reached my goal
+			if(this.isGoalType(myPos)){
+				reached = true;	
+			}
 		}
 		
 		myPos.isVisited();
 		forbiddenNodes.clear();
+	}
+	
+	public boolean isComplete() {
+		for (Node n : nodes) {
+			if(!n.isVisited()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean noMoreTreasure(int treasureType) {
+		int qtyTreasure = 0;
+		
+		for (Node n : nodes) {
+			if((treasureType == WalkToGoalBehaviour.DIAMOND)||(treasureType == WalkToGoalBehaviour.TREASURE))
+				qtyTreasure += n.getQuantityD();
+			if((treasureType == WalkToGoalBehaviour.GOLD)||(treasureType == WalkToGoalBehaviour.TREASURE))
+				qtyTreasure += n.getQuantityG();
+		}
+		
+		return qtyTreasure == 0;
 	}
 }

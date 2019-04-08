@@ -11,6 +11,7 @@ import eu.su.mas.dedaleEtu.mas.behaviours.LootBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 
 public class MyCollectorAgent extends MyAbstractAgent {
 
@@ -44,6 +45,8 @@ public class MyCollectorAgent extends MyAbstractAgent {
 		fsm.registerState(new LootBehaviour(this), "Loot");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.SILO), "WalkToSilo");
 		fsm.registerState(new EmptyBackpackBehaviour(this), "EmptyBackpack");
+		// this behaviour does nothing else other than terminate the FSM
+		fsm.registerLastState(new OneShotBehaviour() {public void action() {}}, "End");
 		
 		fsm.registerDefaultTransition("WalkToTreasure", "Loot");
 		
@@ -53,7 +56,8 @@ public class MyCollectorAgent extends MyAbstractAgent {
 		fsm.registerTransition("WalkToSilo", "EmptyBackpack", 1);
 		fsm.registerTransition("WalkToSilo", "WalkToSilo", 2);
 		
-		fsm.registerDefaultTransition("EmptyBackpack", "WalkToTreasure");
+		fsm.registerTransition("EmptyBackpack", "WalkToTreasure", 1);
+		fsm.registerTransition("EmptyBackpack", "End", 2);
 		
 		lb.add(fsm);
 		

@@ -33,7 +33,7 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 	
 	private int goalType;
 	private int behaviourType;
-	private boolean reached = false;
+	private boolean reached;
 	private Graphe myMap;
 	
 	public SetGoalBehaviour(AbstractDedaleAgent agent, int goalType, int behaviourType) {
@@ -46,10 +46,7 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 	@Override
 	public void action() {
 		
-		boolean firstTurn = myMap.getNodes().isEmpty();	// is only true on the very first iteration
-		
-		if(!firstTurn)
-			myMap.move(); // If we came back here, it means the agent has moved; this will update myPos
+		reached = false;
 		
 		/* ---------------
 		 *   Look around
@@ -67,7 +64,6 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 			
 			int qtyD = 0;
 			int qtyG = 0;
-			Boolean b=false;
 			for(Couple<Observation,Integer> o:lObservations){
 				switch (o.getLeft()) {
 				case DIAMOND:case GOLD:
@@ -80,7 +76,6 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 					System.out.println(this.myAgent.getLocalName()+" - Value of the treasure on the current position: "+o.getLeft() +": "+ o.getRight());
 					System.out.println(this.myAgent.getLocalName()+" - The agent grabbed :"+((AbstractDedaleAgent) this.myAgent).pick());
 					System.out.println(this.myAgent.getLocalName()+" - the remaining backpack capacity is: "+ ((AbstractDedaleAgent) this.myAgent).getBackPackFreeSpace());
-					b=true;
 					break;
 				default:
 					break;
@@ -89,11 +84,12 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 			
 			myMap.addNode(myPosition, qtyG, qtyD, true);
 			
-			//If the agent picked (part of) the treasure
+			/* Not needed for now, we only have explorers
+			 * //If the agent picked (part of) the treasure
 			if (b){
 				List<Couple<String,List<Couple<Observation,Integer>>>> lobs2=((AbstractDedaleAgent)this.myAgent).observe();//myPosition
 				System.out.println(this.myAgent.getLocalName()+" - State of the observations after trying to pick something "+lobs2);
-			}
+			}*/
 			
 			// looks at all observable nodes (ie neighbouring nodes)
 			List<String> nbrs = new ArrayList<>();

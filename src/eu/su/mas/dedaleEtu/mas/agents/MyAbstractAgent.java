@@ -19,7 +19,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected AID interlocuteur = null;
 	protected String[] otherInfo = new String[2];
 	protected Graphe myMap = new Graphe();
-	protected boolean youMove = false;
+	protected boolean youMove = false;		// boolean value to send to another agent, indicating whether he moves or not
 	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
 	
 	/**

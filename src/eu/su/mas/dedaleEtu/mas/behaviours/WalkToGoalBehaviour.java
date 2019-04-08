@@ -1,11 +1,13 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
+import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class WalkToGoalBehaviour extends FSMBehaviour {
-
+	//FIXME error; inconsistent FSM behaviour, most likely coming from here
+	// use reset at the end. Ensure everything will still work 
 	private static final long serialVersionUID = 7361851680230247600L;
 	
 	// All potential values for type
@@ -15,11 +17,14 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 	public static final int DIAMOND = 3;
 	public static final int SILO = 4;
 	
+	private int myType;
+	
 	/**
 	 * A boolean indicating whether the goal has been reached or not. Is used as the value to end the behaviour
 	 */	
 	public WalkToGoalBehaviour(final MyAbstractAgent myagent, int type) {
 		super(myagent);
+		myType = type;
 		
 		/*------------
 		 * Behaviours
@@ -79,7 +84,27 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 		
 	}
 	
-
+	@Override
+	public int onEnd() {
+		Graphe myMap = ((MyAbstractAgent)this.myAgent).getMyMap();
+		reset();
+		switch (myType) {
+		case OPEN:
+			if(myMap.isComplete())
+				return 2;
+			return 1;
+		case TREASURE:
+			if(myMap.noMoreTreasure(TREASURE))
+				return 2;
+			return 1;
+		case GOLD:case DIAMOND:
+			if(myMap.noMoreTreasure(myType))
+				return 2;
+			return 1;
+		default:
+			return 1;
+		}
+	}
 	
 
 }

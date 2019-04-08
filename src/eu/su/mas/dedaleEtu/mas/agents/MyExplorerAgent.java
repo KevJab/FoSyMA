@@ -17,6 +17,7 @@ import eu.su.mas.dedaleEtu.mas.data.MapInformation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MyMapRepresentation;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -58,12 +59,15 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		FSMBehaviour fsm = new FSMBehaviour(this);
 		fsm.registerFirstState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.OPEN), "Explore");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.TREASURE), "Lockpick");
+		// this behaviour does nothing else other than terminate the FSM
+		fsm.registerLastState(new OneShotBehaviour() {public void action() {}}, "End");
 		
-		fsm.registerTransition("Explore", "Explore", 0);
-		fsm.registerTransition("Explore", "Lockpick", 1);
+		fsm.registerTransition("Explore", "Explore",1);
+		fsm.registerTransition("Explore", "Lockpick", 2);
 		
-		fsm.registerDefaultTransition("Lockpick", "Lockpick");
-		
+		fsm.registerTransition("Lockpick", "Lockpick", 1);
+		fsm.registerTransition("Lockpick", "End", 2);
+				
 		lb.add(fsm);
 		
 		/***

@@ -123,6 +123,13 @@ public class Node implements Serializable{
 		update();
 	}
 	
+	public void addNeighbour(String nbr) {
+		if(this.neighbours == null)
+			this.neighbours = new ArrayList<>();
+		if(!this.neighbours.contains(nbr))
+			this.neighbours.add(nbr);
+	}
+	
 	/**
 	 * Updates the node after the agent picked some gold
 	 * @param qty the amount of gold the agent was able to pick (return value from Agent.pick() )
