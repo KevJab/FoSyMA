@@ -46,6 +46,34 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 	@Override
 	public void action() {
 		
+		
+		
+		// check if I am on a goal (done here because I want to look around regardless)
+		if(myMap.goalReached()) {
+			reached = true;
+			return;
+		}
+		
+		// actually set a new goal (depending on which behaviour in the FSM this actually is)
+		switch (behaviourType) {
+		case INIT:
+			actionInit();
+			break;
+		case SENDER:
+			actionSender();
+			break;
+		case RECEIVER:
+			actionReceiver();
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * The action taken by the agent at the start of the WalkToGoalBehaviour FSM
+	 */
+	private void actionInit() {
 		reached = false;
 		
 		/* ---------------
@@ -114,35 +142,11 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 				myMap.addEdges(myPosition, nbr);
 				myMap.addNode(nbr, qtyG_nbr, qtyD_nbr, false);
 			}
+			
+			myMap.setNewGoal(goalType);
 		}
 		
-		// check if I am on a goal (done here because I want to look around regardless)
-		if(myMap.goalReached()) {
-			reached = true;
-			return;
-		}
 		
-		// actually set a new goal (depending on which behaviour in the FSM this actually is)
-		switch (behaviourType) {
-		case INIT:
-			actionInit();
-			break;
-		case SENDER:
-			actionSender();
-			break;
-		case RECEIVER:
-			actionReceiver();
-			break;
-		default:
-			break;
-		}
-	}
-
-	/**
-	 * The action taken by the agent at the start of the WalkToGoalBehaviour FSM
-	 */
-	private void actionInit() {
-		myMap.setNewGoal(goalType);
 	}
 
 	/**

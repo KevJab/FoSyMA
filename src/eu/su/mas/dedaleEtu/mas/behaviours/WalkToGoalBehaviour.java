@@ -6,8 +6,6 @@ import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class WalkToGoalBehaviour extends FSMBehaviour {
-	//FIXME error; inconsistent FSM behaviour, most likely coming from here
-	// use reset at the end. Ensure everything will still work 
 	private static final long serialVersionUID = 7361851680230247600L;
 	
 	// All potential values for type

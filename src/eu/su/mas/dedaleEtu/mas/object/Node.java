@@ -80,6 +80,17 @@ public class Node implements Serializable{
 		return this.name.equals(n.name);
 	}
 	
+	// needed for use in HashMap
+	@Override
+	public int hashCode() {
+		return this.name.hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return this.name/* + ": (G: "+quantityG+"; D: "+quantityD+")"*/;
+	}
+	
 	/* --------------------------
 	 *   Getters 
 	 * --------------------------*/

@@ -37,7 +37,6 @@ public class RandomWalkBehaviour extends OneShotBehaviour{
 	 * As long as the map is not complete, <code>endVal</code> will be 2 (ie ping + map exchange). </br>
 	 * Otherwise, this will be the last step before becoming an unlocker.
 	 */
-	//TODO not random, target should be an open node
 	@Override
 	public void action() {
 		//Example to retrieve the current position

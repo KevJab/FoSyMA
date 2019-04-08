@@ -225,7 +225,7 @@ public class Graphe implements Serializable{
 	 * When encountering another <code>Agent</code>, merges both graphs together
 	 * @param other the other agent's <code>Graphe</code>
 	 */
-	//TODO check if correct, I don't think so
+	//TODO check if correct, I'm not sure
 	public void merge(Graphe other) {
 		Node myNode;
 		for(Node n : other.getNodes()) {
@@ -255,10 +255,10 @@ public class Graphe implements Serializable{
 					condition = false;
 					break;
 				}
-				//TODO redo this; setNewGoal should be called after each step
+				/*//TO DO redo this; setNewGoal should be called after each step
 				if ((condition)||(myNode.equals(goalNode))) { // if the goal has been visited by the other agent
 					setNewGoal(goalType);
-				}
+				}*/
 			}
 		}
 	}
@@ -330,13 +330,12 @@ public class Graphe implements Serializable{
 		}
 		goalNode = (minNode != null) ? minNode : myPos;		// goalNode is now the nearest not forbidden potential goal node, or myPos if there are no nodes to see
 		
-		System.out.println("I'm at "+myPos.getName()+"; I wanna go to "+goalNode.getName());
 		if(!goalNode.equals(myPos)) {
-			System.out.println("I'm in...");
-			//FIXME it seems like predecessors.get(goalNode) returns null, hence a NullPointerException
-			// This comes from minNode == null, making me do goalNode = myPos
+			System.out.println("goalNode:" + goalNode);
 			if(predecessors.get(goalNode) == null)
 				System.out.println("as I thought...");
+			if(!predecessors.containsKey(goalNode))
+				System.out.println("Well that's weird...");
 			while(!predecessors.get(goalNode).equals(myPos)) {
 				System.out.println("a");
 				goalNode = predecessors.get(goalNode);
@@ -367,10 +366,9 @@ public class Graphe implements Serializable{
 			reached = true;
 		
 	}*/
-	//TODO check if goalnode needs to be reset, and other things too (like forbidden)
+	
 	public void move(boolean hasMoved) {
 		if(hasMoved) {
-			myPos.visit();
 			myPos = goalNode;
 			// if I am now on a [goalType] type of Node, I have reached my goal
 			if(this.isGoalType(myPos)){
@@ -378,7 +376,7 @@ public class Graphe implements Serializable{
 			}
 		}
 		
-		myPos.isVisited();
+		myPos.visit();
 		forbiddenNodes.clear();
 	}
 	
