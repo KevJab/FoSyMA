@@ -9,7 +9,9 @@ import java.util.Set;
 
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 
 /**
  * A <code>Graphe</code> has 4 arguments: 
@@ -91,6 +93,16 @@ public class Graphe implements Serializable{
 		return edges;
 	}
 	
+	public Set<String> getNodesSeen(){
+		Set<String> nodesSeen = new HashSet<>();
+		for(Node n : nodes) {
+			if (n.isVisited())
+				nodesSeen.add(n.getName());
+		}
+		
+		return nodesSeen;
+	}
+	
 	/**
 	 * Tells you if the agent reached a <i>goalType</i> type of node. Is only called after the move has been made.
 	 * @return true if <code>myPos</code> is a goal type node, false otherwise
@@ -157,7 +169,7 @@ public class Graphe implements Serializable{
 	private List<Node> getNeighbourNodes(Node n){
 		List<Node> nbrs = new ArrayList<>();
 		List<String> nbrName = n.getNeighbours();
-		System.out.println("my neighbours are " + nbrName);
+		//System.out.println("my neighbours are " + nbrName);
 		for(Node node : nodes) {
 			if(nbrName.contains(node.getName()))
 				nbrs.add(node);
@@ -221,6 +233,12 @@ public class Graphe implements Serializable{
 		this.getNode(nodeX).addNeighbour(nodeY);
 	}
 	
+	public void forbidNode(String node_id) {
+		Node forbidden = this.getNode(node_id);
+		if(forbidden != null)
+			this.forbiddenNodes.add(forbidden);
+	}
+	
 	/**
 	 * When encountering another <code>Agent</code>, merges both graphs together
 	 * @param other the other agent's <code>Graphe</code>
@@ -242,13 +260,13 @@ public class Graphe implements Serializable{
 					condition = myNode.isVisited();
 					break;
 				case WalkToGoalBehaviour.TREASURE:
-					condition = (myNode.getQuantityD() == 0) && (myNode.getQuantityG() == 0);
+					condition = (myNode.getquantityDiam() == 0) && (myNode.getquantityGold() == 0);
 					break;
 				case WalkToGoalBehaviour.GOLD:
-					condition = myNode.getQuantityG() == 0;
+					condition = myNode.getquantityGold() == 0;
 					break;
 				case WalkToGoalBehaviour.DIAMOND:
-					condition = myNode.getQuantityD() == 0;
+					condition = myNode.getquantityDiam() == 0;
 					break;
 				//dunno what to do in case WalkToGoalBehaviour.SILO
 				default:
@@ -265,8 +283,8 @@ public class Graphe implements Serializable{
 	
 	private boolean isGoalType(Node n) {
 		return ((goalType == WalkToGoalBehaviour.OPEN) && (!n.isVisited()))|| 
-				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.GOLD)) && (n.getQuantityG() != 0)) || 
-				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getQuantityD() != 0));
+				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.GOLD)) && (n.getquantityGold() != 0)) || 
+				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getquantityDiam() != 0));
 	}
 	
 	/**
@@ -275,7 +293,6 @@ public class Graphe implements Serializable{
 	 */
 	public void setNewGoal(int goalType) {
 		if(nodes.isEmpty()) {	// if I have nowhere to go, I can't do anything; should only be called by the very first setNewGoal
-			System.out.println("CPUOCOUCO" + myPos);
 			goalNode = myPos;
 			return;
 		}
@@ -297,19 +314,19 @@ public class Graphe implements Serializable{
 			dist.put(myPos, current_dist);
 		}
 		while(toVisit.size() > 0) {
-			System.out.println("Iteration; size = "+toVisit.size());
+			//System.out.println("Iteration; size = "+toVisit.size());
 			Node current = toVisit.get(0);
 			toVisit.remove(current);
 			current_dist++;
 			for(Node n : getNeighbourNodes(current)) {
-				System.out.println("neighbours");
+				//System.out.println("neighbours");
 				if(this.isGoalType(n)) {
 					potentialGoals.add(n);
 					dist.put(n, current_dist);
 				}
 				
 				if(!dejavu.contains(n)) {
-					System.out.println("adding said neighbour");
+					//System.out.println("adding said neighbour");
 					toVisit.add(n);
 					dejavu.add(n);
 					predecessors.put(n, current);
@@ -321,7 +338,7 @@ public class Graphe implements Serializable{
 		Node minNode = null;
 		for(Node n : dist.keySet()) {
 			if(!forbiddenNodes.contains(n)) {	// if Node n is not forbidden by the other agent
-				System.out.println("There is a potential goal");
+				//System.out.println("There is a potential goal");
 				if(dist.get(n) < minDist) {
 					minDist = dist.get(n);
 					minNode = n;
@@ -331,13 +348,12 @@ public class Graphe implements Serializable{
 		goalNode = (minNode != null) ? minNode : myPos;		// goalNode is now the nearest not forbidden potential goal node, or myPos if there are no nodes to see
 		
 		if(!goalNode.equals(myPos)) {
-			System.out.println("goalNode:" + goalNode);
+			//System.out.println("goalNode:" + goalNode);
 			if(predecessors.get(goalNode) == null)
 				System.out.println("as I thought...");
 			if(!predecessors.containsKey(goalNode))
 				System.out.println("Well that's weird...");
 			while(!predecessors.get(goalNode).equals(myPos)) {
-				System.out.println("a");
 				goalNode = predecessors.get(goalNode);
 			}
 		}
@@ -366,7 +382,11 @@ public class Graphe implements Serializable{
 			reached = true;
 		
 	}*/
-	
+	/**
+	 * Called after the agent's <code>moveTo</code>, with the argument <code>hasMoved</code> being what moveTo returned.</br>
+	 * Whether the agent moved or not, it visits the current node and clears the list of forbidden ones. If he has moved, he goes to the next step as well and checks if he reached his goal.
+	 * @param hasMoved true if the agent was actually able to move
+	 */
 	public void move(boolean hasMoved) {
 		if(hasMoved) {
 			myPos = goalNode;
@@ -394,11 +414,43 @@ public class Graphe implements Serializable{
 		
 		for (Node n : nodes) {
 			if((treasureType == WalkToGoalBehaviour.DIAMOND)||(treasureType == WalkToGoalBehaviour.TREASURE))
-				qtyTreasure += n.getQuantityD();
+				qtyTreasure += n.getquantityDiam();
 			if((treasureType == WalkToGoalBehaviour.GOLD)||(treasureType == WalkToGoalBehaviour.TREASURE))
-				qtyTreasure += n.getQuantityG();
+				qtyTreasure += n.getquantityGold();
 		}
 		
 		return qtyTreasure == 0;
+	}
+	
+	/* Currently unused, because I do not know how to use it */
+	public MapRepresentation toMapRep() {
+		MapRepresentation mr = new MapRepresentation();
+		for(Node n : nodes) {
+			mr.addNode(n.getName());
+		}
+		for(String node : edges.keySet()) {
+			for(String nbr : edges.get(node)) {
+				mr.addEdge(node, nbr);
+			}
+		}
+		
+		return mr;
+	}
+	
+	/**
+	 * changes the current Node's lock state for the treasure type given
+	 * @param treasureType -- the treasure type whose lock the agent removed
+	 */
+	public void unlock(Observation treasureType) {
+		myPos.unlock(treasureType);
+	}
+	
+	/**
+	 * picks some or all of the treasure on the current tile
+	 * @param treasureType -- the treasure type the agent can pick
+	 * @param qty -- how much treasure he took
+	 */
+	public void pick(Observation treasureType, int qty) {
+		myPos.pick(treasureType, qty);
 	}
 }

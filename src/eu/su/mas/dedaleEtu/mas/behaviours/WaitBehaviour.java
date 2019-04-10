@@ -26,7 +26,7 @@ public class WaitBehaviour extends WakerBehaviour {
 
 	public WaitBehaviour(Agent a, int type) {
 		//TODO maybe 2 seconds of wait is too much
-		super(a, 2000);
+		super(a, 1000);
 		this.type = type;
 	}
 	
@@ -73,7 +73,8 @@ public class WaitBehaviour extends WakerBehaviour {
 		//1) receive the message
 		// Template: match corresponding performative and I'm not the sender (I don't want to read my own messages)
 		//TODO test simple matchperformative
-		final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
+		final MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(performative);
+		//final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
 		
 		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
 

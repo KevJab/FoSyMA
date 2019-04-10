@@ -1,27 +1,13 @@
 package eu.su.mas.dedaleEtu.mas.agents;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
-import eu.su.mas.dedaleEtu.mas.behaviours.MyExploSoloBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.ReceivedMessageBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.SayHello;
-import eu.su.mas.dedaleEtu.mas.behaviours.SendMessageBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.WaitBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
-import eu.su.mas.dedaleEtu.mas.data.MapInformation;
-import eu.su.mas.dedaleEtu.mas.knowledge.MyMapRepresentation;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 public class MyExplorerAgent extends MyAbstractAgent {
 	
@@ -60,7 +46,8 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		fsm.registerFirstState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.OPEN), "Explore");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.TREASURE), "Lockpick");
 		// this behaviour does nothing else other than terminate the FSM
-		fsm.registerLastState(new OneShotBehaviour() {public void action() {}}, "End");
+		fsm.registerLastState(new OneShotBehaviour() {private static final long serialVersionUID = 1L;
+														public void action() {}}, "End");
 		
 		fsm.registerTransition("Explore", "Explore",1);
 		fsm.registerTransition("Explore", "Lockpick", 2);

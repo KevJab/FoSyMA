@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import eu.su.mas.dedale.env.Observation;
-import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
-import jade.core.Agent;
 
 public class Node implements Serializable{
 	
@@ -17,10 +15,14 @@ public class Node implements Serializable{
 	private static final long serialVersionUID = 3725959494229620330L;
 	
 	private String name;
-	private int quantityG;
-	private int quantityD;
-	private boolean locked; //TODO implement corresponding methods
-	private int strengthNeeded; //TODO implement correponding methods
+	private int quantityGold;
+	private boolean lockedGold;
+	private int strengthNeededGold;	// TODO not used yet; can be useful for strategies
+	
+	private int quantityDiam;
+	private boolean lockedDiam;
+	private int strengthNeededDiam;
+	
 	private boolean visited;
 	private List<String> neighbours;
 	private Date lastUpdateDate;
@@ -34,10 +36,10 @@ public class Node implements Serializable{
 	 * @param visit whether this node has been visited or not
 	 * @param date its latest update Date
 	 */
-	public Node(String n, int qtyGold, int qtyDiam, List<String> nbrs, boolean visit) {
+	public Node(String n, int qtyGold, int qtyDiam,  List<String> nbrs, boolean visit) {
 		name = n;
-		quantityG = qtyGold;
-		quantityD = qtyDiam;
+		quantityGold = qtyGold;
+		quantityDiam = qtyDiam;
 		visited  = visit;
 		neighbours = nbrs;
 		lastUpdateDate = new Date();
@@ -49,10 +51,10 @@ public class Node implements Serializable{
 	 */
 	public Node(Node other) {
 		name = other.name;
-		quantityG = other.quantityG;
-		quantityD = other.quantityD;
-		locked = other.locked;
-		strengthNeeded = other.strengthNeeded;
+		quantityGold = other.quantityGold;
+		quantityDiam = other.quantityDiam;
+		lockedDiam = other.lockedDiam;
+		lockedGold = other.lockedGold;
 		visited = other.visited;
 		lastUpdateDate = other.lastUpdateDate;
 		
@@ -88,7 +90,7 @@ public class Node implements Serializable{
 	
 	@Override
 	public String toString() {
-		return this.name/* + ": (G: "+quantityG+"; D: "+quantityD+")"*/;
+		return this.name/* + ": (G: "+quantityGold+"; D: "+quantityDiam+")"*/;
 	}
 	
 	/* --------------------------
@@ -98,20 +100,23 @@ public class Node implements Serializable{
 		return name;
 	}
 	
-	public int getQuantityG() {
-		return quantityG;
+	public int getquantityGold() {
+		return quantityGold;
 	}
 	
-	public int getQuantityD() {
-		return quantityD;
+	public int getquantityDiam() {
+		return quantityDiam;
 	}
 	
-	public boolean isLocked() {
-		return locked;
-	}
-	
-	public int strengthNeeded() {
-		return (locked) ? strengthNeeded : 0;
+	public boolean isLocked(Observation treasureType) {
+		switch(treasureType) {
+		case GOLD:
+			return lockedGold;
+		case DIAMOND:
+			return lockedDiam;
+		default:
+			return true;
+		}
 	}
 
 	public boolean isVisited() {
@@ -142,24 +147,6 @@ public class Node implements Serializable{
 	}
 	
 	/**
-	 * Updates the node after the agent picked some gold
-	 * @param qty the amount of gold the agent was able to pick (return value from Agent.pick() )
-	 */
-	public void pickGold(int qty) {
-		quantityG -= qty;
-		update();
-	}
-	
-	/**
-	 * Updates the node after the agent picked some diamonds
-	 * @param qty the amount of diamonds the agent was able to pick (return value from Agent.pick() )
-	 */
-	public void pickDiam(int qty) {
-		quantityD -= qty;
-		update();
-	}
-	
-	/**
 	 * The agent has visited this Node; sets <code>visited</code> to <b>true</b> and updates <code>lastUpdateDate</code>
 	 */
 	public void visit() {
@@ -168,13 +155,58 @@ public class Node implements Serializable{
 	}
 	
 	/**
+	 * Updates the node after the agent picked some treasure (gold or diamond)
+	 * @param treasureType the treasure type the agent picked
+	 * @param qty the amount of treasure the agent was able to pick (return value from Agent.pick() )
+	 */
+	public void pick(Observation treasureType, int qty) {
+		switch (treasureType) {
+		case GOLD:
+			quantityGold -= qty;
+			update();
+			break;
+		case DIAMOND:
+			quantityDiam -= qty;
+			update();
+		default:
+			break;
+		}
+	}
+	
+	/** 
+	 * The agent has unlocked a treasure on this tile
+	 */
+	public void unlock(Observation treasureType) {
+		switch (treasureType) {
+		case GOLD:
+			lockedGold = false;
+			update();
+			break;
+		case DIAMOND:
+			lockedDiam = false;
+			update();
+			break;
+		default:
+			break;
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	
+	public void unlockDiam() {
+		
+	}
+	
+	/**
 	 * Updates this node with the data of <code>other</code>, if it is more recent
 	 * @param other the same node, in another agent's graph
 	 */
 	public void update(Node other) {
 		if(other.lastUpdateDate.after(this.lastUpdateDate)){
-			quantityG = other.quantityG;
-			quantityD = other.quantityD;
+			quantityGold = other.quantityGold;
+			quantityDiam = other.quantityDiam;
 			visited = other.visited;
 			neighbours = other.neighbours;
 			lastUpdateDate = other.lastUpdateDate;

@@ -47,7 +47,7 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 		this.registerState(new WalkBehaviour(myagent, type), "Walk"); 	
 		
 		// pretty self explanatory; says hello, sending (wish_node, cur_node)
-		this.registerState(new SayHello(myagent), "PingSend");					
+		this.registerState(new SayHelloBehaviour(myagent, SayHelloBehaviour.PING), "PingSend");					
 		
 		// this behaviour does nothing else other than terminate the FSM
 		this.registerLastState(new OneShotBehaviour() {public void action() {}}, "End");

@@ -49,6 +49,8 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	public void setOtherInfo(String other_wish_node, String other_cur_node) {
 		otherInfo[0] = other_wish_node;
 		otherInfo[1] = other_cur_node;
+		myMap.forbidNode(other_wish_node);
+		myMap.forbidNode(other_cur_node);
 	}
 	
 	/**
