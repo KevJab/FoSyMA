@@ -1,8 +1,6 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 
-import java.io.IOException;
-
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.AID;
@@ -28,7 +26,7 @@ public class WaitBehaviour extends WakerBehaviour {
 
 	public WaitBehaviour(Agent a, int type) {
 		//TODO maybe 2 seconds of wait is too much
-		super(a, 2000);
+		super(a, 1000);
 		this.type = type;
 	}
 	
@@ -44,7 +42,7 @@ public class WaitBehaviour extends WakerBehaviour {
 			msg.setSender(myagent.getAID());
 			msg.addReceiver(new AID(myagent.getInterlocuteur().getLocalName(), AID.ISLOCALNAME));  
 			
-			msg.setContent("PingResponse");
+			msg.setContent(myagent.doYouMove() + "," + myagent.getMyMap().getGoal() + ","+ myagent.getMyMap().getMyPos());
 			myagent.sendMessage(msg);
 		}
 	}
@@ -75,18 +73,31 @@ public class WaitBehaviour extends WakerBehaviour {
 		//1) receive the message
 		// Template: match corresponding performative and I'm not the sender (I don't want to read my own messages)
 		//TODO test simple matchperformative
-		final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
+		final MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(performative);
+		//final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
 		
 		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {	
-			endVal = 2;	//FSM goes to Send
+			endVal = 2;	//[type] message received
 			((MyAbstractAgent) this.myAgent).setInterlocuteur(msg.getSender());
 			System.out.println(msg.getSender().getLocalName()+" replied to " + this.myAgent.getLocalName());
 			
-
-			if(type == SEND) {
+			String[] pingresponse_info;
+			switch (type) {
+			case PING:
+				pingresponse_info = msg.getContent().split(",");	// message should be "wish_node,cur_node"
+				myagent.setOtherInfo(pingresponse_info[0], pingresponse_info[1]);
+				break;
+			case PINGRESPONSE:
+				pingresponse_info = msg.getContent().split(","); 	// message received should be "need_to_update,wish_node,cur_node"
+				if (Boolean.parseBoolean(pingresponse_info[0])) { 	// I need to update (if I don't, endVal is already at 2; check about 15 lines above)
+					endVal = 3;
+					myagent.setOtherInfo(pingresponse_info[1], pingresponse_info[2]);
+				}
+				break;
+			case SEND:
 				Graphe g = null;
 				try {
 					g = (Graphe) msg.getContentObject();
@@ -95,7 +106,11 @@ public class WaitBehaviour extends WakerBehaviour {
 				}
 				myagent.getMyMap().merge(g);
 				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
+				break;
+			default:
+				break;
 			}
+			
 		}else{
 			String wait = "Wait";
 			switch(type) {
@@ -113,7 +128,7 @@ public class WaitBehaviour extends WakerBehaviour {
 				break;
 			}
 			System.out.println(this.myAgent.getLocalName()+ " is sad, nobody wants to talk with them; exiting "+ wait + " state");
-			endVal = (myagent.getType().equals("EXPLORER")) ? 1 : 3;	//waited too long; 
+			endVal = 1;	//waited too long; 
 		}
 	}
 	

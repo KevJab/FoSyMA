@@ -39,7 +39,6 @@ public class SendMessageBehaviour extends SimpleBehaviour {
 			
 		//2° compute the random value		
 		try {
-			//TODO Re-do getHashMap method. now: MapInformation; post fix: Graphe
 			msg.setContentObject(myagent.getMyMap());
 		} catch (IOException e) {
 			e.printStackTrace();

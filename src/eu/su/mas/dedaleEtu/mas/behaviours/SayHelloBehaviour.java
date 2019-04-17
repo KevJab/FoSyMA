@@ -10,32 +10,40 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
-/**
- * This example behaviour try to send a hello message (every 3s maximum) to agents Collect2 Collect1
- * @author hc
- *
- */
-public class SayHello extends OneShotBehaviour{
+public class SayHelloBehaviour extends OneShotBehaviour{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2058134622078521998L;
+	private static final long serialVersionUID = -3570245643164391414L;
+	
+	public static final int PING = 1;
+	public static final int HELP = 2;
+	private int type;
 
 	/**
 	 * An agent tries to contact its friend and to give him its current position
 	 * @param myagent the agent who posses the behaviour
 	 *  
 	 */
-	public SayHello (final Agent myagent) {
+	public SayHelloBehaviour(final Agent myagent, int type) {
 		super(myagent);
+		this.type = type;
 	}
 
 	@Override
 	public void action() {
+		switch (type) {
+		case PING:
+			actionPing();
+			break;
+		case HELP:
+			actionHelp();
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void actionPing() {
 		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
-		
-		String myPosition=(myagent).getCurrentPosition();
 		
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription () ;
@@ -71,6 +79,10 @@ public class SayHello extends OneShotBehaviour{
 		}
 
 		
+	}
+	
+	private void actionHelp() {
+		//TODO call for help and keep track of how often you did; stop after a few iterations
 	}
 
 }

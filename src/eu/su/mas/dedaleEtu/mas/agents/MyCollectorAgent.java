@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.su.mas.dedale.env.Observation;
-import eu.su.mas.dedale.mas.agent.behaviours.RandomWalkBehaviour;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.EmptyBackpackBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.LootBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 
 public class MyCollectorAgent extends MyAbstractAgent {
 
@@ -18,6 +18,9 @@ public class MyCollectorAgent extends MyAbstractAgent {
 	 * 
 	 */
 	private static final long serialVersionUID = 555938552790588773L;
+	
+	//TODO make Collectors initially Explorers too
+	//TODO once the whole map is explored, define an order for the treasures
 	
 	
 	protected void setup(){
@@ -44,6 +47,8 @@ public class MyCollectorAgent extends MyAbstractAgent {
 		fsm.registerState(new LootBehaviour(this), "Loot");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.SILO), "WalkToSilo");
 		fsm.registerState(new EmptyBackpackBehaviour(this), "EmptyBackpack");
+		// this behaviour does nothing else other than terminate the FSM
+		fsm.registerLastState(new OneShotBehaviour() {private static final long serialVersionUID = 1L; public void action() {}}, "End");
 		
 		fsm.registerDefaultTransition("WalkToTreasure", "Loot");
 		
@@ -53,7 +58,8 @@ public class MyCollectorAgent extends MyAbstractAgent {
 		fsm.registerTransition("WalkToSilo", "EmptyBackpack", 1);
 		fsm.registerTransition("WalkToSilo", "WalkToSilo", 2);
 		
-		fsm.registerDefaultTransition("EmptyBackpack", "WalkToTreasure");
+		fsm.registerTransition("EmptyBackpack", "WalkToTreasure", 1);
+		fsm.registerTransition("EmptyBackpack", "End", 2);
 		
 		lb.add(fsm);
 		
