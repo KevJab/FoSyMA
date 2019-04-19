@@ -9,6 +9,9 @@ import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.behaviours.SimpleBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 public class SetGoalBehaviour extends SimpleBehaviour {
 
@@ -45,6 +48,22 @@ public class SetGoalBehaviour extends SimpleBehaviour {
 
 	@Override
 	public void action() {
+		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
+		
+		final MessageTemplate msgTemplate = MessageTemplate.MatchOntology("echo");
+		final ACLMessage msg = myagent.receive(msgTemplate);
+		if(msg != null) {
+			Graphe g = null;
+			try {
+				g = (Graphe) msg.getContentObject();
+			} catch (UnreadableException e) {
+				e.printStackTrace();
+			}
+			myagent.getMyMap().merge(g);
+			
+			reached = true;
+			return;
+		}
 		
 		
 		

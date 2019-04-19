@@ -243,8 +243,9 @@ public class Graphe implements Serializable{
 	 * When encountering another <code>Agent</code>, merges both graphs together
 	 * @param other the other agent's <code>Graphe</code>
 	 */
-	//TODO check if correct, I'm not sure
 	public void merge(Graphe other) {
+		if (other == null)
+			return;
 		Node myNode;
 		for(Node n : other.getNodes()) {
 			// my instance of the same node

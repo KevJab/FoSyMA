@@ -72,7 +72,6 @@ public class WaitBehaviour extends WakerBehaviour {
 		}
 		//1) receive the message
 		// Template: match corresponding performative and I'm not the sender (I don't want to read my own messages)
-		//TODO test simple matchperformative
 		final MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(performative);
 		//final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
 		

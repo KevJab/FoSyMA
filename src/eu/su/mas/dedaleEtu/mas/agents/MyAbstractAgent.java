@@ -1,6 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.agents;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.data.MapInformation;
@@ -20,6 +21,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected String[] otherInfo = new String[2];
 	protected Graphe myMap = new Graphe();
 	protected boolean youMove = false;		// boolean value to send to another agent, indicating whether he moves or not
+	protected Map<AID, Boolean> commonKnowledge;
 	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
 	
 	/**
@@ -69,6 +71,38 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	
 	public void setYouMove(boolean value) {
 		youMove = value;
+	}
+	
+	public void setCommonKnowledge() {
+		if(!commonKnowledge.isEmpty())
+			return;
+		
+		DFAgentDescription dfd = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription () ;
+		sd.setType( "ANY" ); // type of the agent
+		dfd.addServices(sd) ;
+		DFAgentDescription[] result;
+		try {
+			result = DFService.search(this, dfd);
+			//You get the list of all the agents (AID) of said type
+			
+			for (DFAgentDescription dfad : result){
+				if(!dfad.getName().equals(this.getAID()))
+					commonKnowledge.put(dfad.getName(), false);
+			}
+			
+		} catch (FIPAException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean isCommonKnowledge() {
+		for (AID aid: commonKnowledge.keySet()) {
+			if(!commonKnowledge.get(aid)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public void register() {

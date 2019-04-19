@@ -12,9 +12,8 @@ public class LootBehaviour extends FSMBehaviour {
 
 	public LootBehaviour(final Agent myagent) {
 		super(myagent);
-		
+		//TODO redo this
 		this.registerFirstState(new OpenTreasureBehaviour(myagent), "Open");
-		this.registerState(new SayHelloBehaviour(myagent, SayHelloBehaviour.HELP), "Help"); //TODO add parameter to SayHello behaviour to handle this case
 		this.registerLastState(new OneShotBehaviour() {private static final long serialVersionUID = 1L; public void action(){ } }, "End");
 		
 		this.registerTransition("Open", "End", 1);
