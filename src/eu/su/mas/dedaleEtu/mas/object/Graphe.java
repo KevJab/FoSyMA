@@ -176,7 +176,7 @@ public class Graphe implements Serializable{
 		return null;
 	}
 	
-	private List<Node> getNeighbourNodes(Node n){
+	public List<Node> getNeighbourNodes(Node n){
 		List<Node> nbrs = new ArrayList<>();
 		List<String> nbrName = n.getNeighbours();
 		//System.out.println("my neighbours are " + nbrName);
