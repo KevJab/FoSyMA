@@ -1,14 +1,8 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import dataStructures.tuple.Couple;
-import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
-import eu.su.mas.dedaleEtu.mas.object.Node;
 import jade.core.behaviours.SimpleBehaviour;
 
 /**

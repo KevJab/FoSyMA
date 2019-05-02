@@ -33,4 +33,8 @@ public class MySiloAgent extends MyAbstractAgent {
 
 	}
 
+	@Override
+	// the silo doesn't need the action method
+	public void action() {}
+
 }

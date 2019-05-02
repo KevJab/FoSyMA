@@ -69,4 +69,9 @@ public class MyCollectorAgent extends MyAbstractAgent {
 
 	}
 
+	@Override
+	public void action() {
+		this.pick();
+	}
+
 }

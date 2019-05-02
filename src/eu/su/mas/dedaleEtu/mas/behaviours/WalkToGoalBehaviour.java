@@ -50,11 +50,13 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 		this.registerState(new SayHelloBehaviour(myagent, SayHelloBehaviour.PING), "PingSend");					
 		
 		// this behaviour does nothing else other than terminate the FSM
-		this.registerLastState(new OneShotBehaviour() { public void action() {}
-														public int onEnd() {
-															return 0;//TODO cf brouillon
-														}
-													   }, "End");
+		this.registerLastState(new OneShotBehaviour() { 
+			private static final long serialVersionUID = 1130302508293567449L;
+			public void action() {}
+			public int onEnd() {
+				return 0;//TODO cf brouillon
+			}
+		}, "End");
 		
 		
 		/*-------------

@@ -1,7 +1,6 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
-import jade.core.Agent;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 
@@ -14,7 +13,17 @@ public class EchoFloodingBehaviour extends FSMBehaviour {
 	public EchoFloodingBehaviour(MyAbstractAgent a) {
 		super(a);
 		
+		this.registerFirstState(new WaitBehaviour(myAgent, WaitBehaviour.ECHO), "Wait");
 		this.registerState(new SayHelloBehaviour(a, SayHelloBehaviour.ECHO), "Inform"); 
+		this.registerLastState(new OneShotBehaviour() {
+			private static final long serialVersionUID = 8357221004356169749L;
+			public void action() {}
+		}, "End");
+		
+		this.registerTransition("Wait", "Inform", 1);
+		this.registerTransition("Wait", "End", 2);
+		
+		this.registerDefaultTransition("Inform", "Wait");
 	}
 	
 	@Override

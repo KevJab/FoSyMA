@@ -3,6 +3,7 @@ package eu.su.mas.dedaleEtu.mas.agents;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 import jade.core.behaviours.Behaviour;
@@ -66,6 +67,14 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
 
+	}
+
+
+
+	@Override
+	public void action() {
+		this.openLock(Observation.DIAMOND);
+		this.openLock(Observation.GOLD);
 	}
 	
 	

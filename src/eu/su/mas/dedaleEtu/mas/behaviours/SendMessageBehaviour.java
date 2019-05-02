@@ -14,8 +14,6 @@ public class SendMessageBehaviour extends SimpleBehaviour {
 	 */
 	private static final long serialVersionUID = 2727785000353107477L;
 	
-	private boolean finished=false;
-	
 	public SendMessageBehaviour(final MyAbstractAgent myagent) {
 		super(myagent);
 		

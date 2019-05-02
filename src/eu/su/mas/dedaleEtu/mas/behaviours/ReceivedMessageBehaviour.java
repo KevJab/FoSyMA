@@ -1,10 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
-import java.util.HashMap;
 
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
-import eu.su.mas.dedaleEtu.mas.agents.MyExplorerAgent;
-import eu.su.mas.dedaleEtu.mas.data.MapInformation;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;

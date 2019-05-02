@@ -17,7 +17,7 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 	private static final long serialVersionUID = -3570245643164391414L;
 		
 	public static final int PING = 1;
-	public static final int ECHO = 2; //FIXME handle this case
+	public static final int ECHO = 2;
 	private int endVal;
 	private int type;
 
@@ -56,6 +56,7 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 				msg.setOntology("echo");
 				try {
 					msg.setContentObject(myagent.getMyMap());
+					msg.setInReplyTo(myagent.getMyKnowledge());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -73,7 +74,7 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 			if (type == PING) 
 				System.out.println(this.myAgent.getLocalName()+" says : Hello? anyone here?");
 			else if (type == ECHO) 
-				System.out.println(this.myAgent.getLocalName()+" says : The map is complete!");
+				System.out.println(this.myAgent.getLocalName()+" says : The map is complete! Here it is!");
 				
 			
 			

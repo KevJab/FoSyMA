@@ -1,12 +1,10 @@
 package eu.su.mas.dedaleEtu.mas.agents;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
-import eu.su.mas.dedaleEtu.mas.data.MapInformation;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
-import eu.su.mas.dedaleEtu.mas.object.Node;
 import jade.core.AID;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -15,14 +13,22 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 @SuppressWarnings("serial")
 public abstract class MyAbstractAgent extends AbstractDedaleAgent {
+	
+	private static int NB_AGENTS = 0;
 
 	protected String type;
 	protected AID interlocuteur = null;
 	protected String[] otherInfo = new String[2];
 	protected Graphe myMap = new Graphe();
 	protected boolean youMove = false;		// boolean value to send to another agent, indicating whether he moves or not
-	protected Map<AID, Boolean> commonKnowledge;
+	protected Set<String> commonKnowledge = new HashSet<>();	// a list of all AIDs (in String form) of agents I am certain know the whole map
 	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
+	
+	protected void setup() {
+		super.setup();
+		
+		NB_AGENTS++;
+	}
 	
 	/**
 	 * Returns the agent type
@@ -73,36 +79,26 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		youMove = value;
 	}
 	
-	public void setCommonKnowledge() {
-		if(!commonKnowledge.isEmpty())
-			return;
-		
-		DFAgentDescription dfd = new DFAgentDescription();
-		ServiceDescription sd = new ServiceDescription () ;
-		sd.setType( "ANY" ); // type of the agent
-		dfd.addServices(sd) ;
-		DFAgentDescription[] result;
-		try {
-			result = DFService.search(this, dfd);
-			//You get the list of all the agents (AID) of said type
-			
-			for (DFAgentDescription dfad : result){
-				if(!dfad.getName().equals(this.getAID()))
-					commonKnowledge.put(dfad.getName(), false);
-			}
-			
-		} catch (FIPAException e) {
-			e.printStackTrace();
-		}
+	public void addKnowledge(AID other) {
+		commonKnowledge.add(this.getAID().toString());
+		commonKnowledge.add(other.toString());
+	}
+	
+	public void mergeKnowledge(Set<String> other) {
+		commonKnowledge.addAll(other);
 	}
 	
 	public boolean isCommonKnowledge() {
-		for (AID aid: commonKnowledge.keySet()) {
-			if(!commonKnowledge.get(aid)) {
-				return false;
-			}
-		}
-		return true;
+		return commonKnowledge.size() == NB_AGENTS;
+	}
+	
+	public String getMyKnowledge() {
+		String res = "";
+		
+		for(String agent : commonKnowledge)
+			res += agent + " ";
+		
+		return res;
 	}
 	
 	public void register() {
@@ -127,5 +123,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 			fe.printStackTrace() ; 
 		}
 	}
+	
+	public abstract void action();
 	
 }

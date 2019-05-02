@@ -1,6 +1,9 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.AID;
@@ -21,6 +24,7 @@ public class WaitBehaviour extends WakerBehaviour {
 	public static final int PING = 1;
 	public static final int PINGRESPONSE = 2;
 	public static final int SEND = 3;
+	public static final int ECHO = 4;
 	
 	private int type;
 
@@ -57,7 +61,7 @@ public class WaitBehaviour extends WakerBehaviour {
 	public void onWake() {
 		int performative;
 		switch(type) {
-		case PING:
+		case PING: case ECHO:
 			performative = ACLMessage.REQUEST;
 			break;
 		case PINGRESPONSE:
@@ -72,8 +76,10 @@ public class WaitBehaviour extends WakerBehaviour {
 		}
 		//1) receive the message
 		// Template: match corresponding performative and I'm not the sender (I don't want to read my own messages)
-		final MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(performative);
+		MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(performative);
 		//final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(performative), MessageTemplate.not(MessageTemplate.MatchSender(this.myAgent.getAID())));
+		if (type == ECHO)
+			msgTemplate = MessageTemplate.and(msgTemplate, MessageTemplate.MatchOntology("echo"));
 		
 		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
 
@@ -106,6 +112,17 @@ public class WaitBehaviour extends WakerBehaviour {
 				myagent.getMyMap().merge(g);
 				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
 				break;
+			case ECHO:
+				String[] agents_AIDs = msg.getInReplyTo().split(" ");
+				
+				Set<String> other_knowledge = new HashSet<>();
+				for (String aid : agents_AIDs)
+					other_knowledge.add(aid);
+				
+				myagent.mergeKnowledge(other_knowledge);
+				
+				endVal = (myagent.isCommonKnowledge()) ? 2 : 1;		
+				break;
 			default:
 				break;
 			}
@@ -122,6 +139,8 @@ public class WaitBehaviour extends WakerBehaviour {
 			case SEND:
 				wait = "Send" + wait;
 				break;
+			case ECHO:
+				wait += "Echo";
 			default:
 				wait = "";
 				break;
