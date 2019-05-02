@@ -14,6 +14,7 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 	public static final int GOLD = 2;
 	public static final int DIAMOND = 3;
 	public static final int SILO = 4;
+	public static final int GOAL = 5;
 	
 	private int myType;
 	
@@ -53,9 +54,6 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 		this.registerLastState(new OneShotBehaviour() { 
 			private static final long serialVersionUID = 1130302508293567449L;
 			public void action() {}
-			public int onEnd() {
-				return 0;//TODO cf brouillon
-			}
 		}, "End");
 		
 		
@@ -68,6 +66,7 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 		
 		this.registerTransition("PingWait", "PingSend", 1);
 		this.registerTransition("PingWait", "ResetGoalR", 2);
+		this.registerTransition("PingWait", "End", 3);
 		
 		this.registerTransition("PingResponseWait", "Walk", 1);
 		this.registerTransition("PingResponseWait", "Send", 2);

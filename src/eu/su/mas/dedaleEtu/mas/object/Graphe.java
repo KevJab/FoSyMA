@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
@@ -40,6 +38,10 @@ public class Graphe implements Serializable{
 	private boolean reached;
 	private int goalType;
 	private List<Node> forbiddenNodes;
+	
+	// used in the second phase. siloNode should normally not change afterwards anymore, distantGoal will be sent by the Silo
+	private String siloNode;
+	private String distantGoal;
 	
 	/* ----------------
 	 *   Constructors
@@ -132,6 +134,14 @@ public class Graphe implements Serializable{
 	
 	public void setMyPos(String name) {
 		myPos = getNode(name);
+	}
+	
+	public void setSiloNode(String node) {
+		siloNode = node;
+	}
+	
+	public void setDistantGoal(String node) {
+		distantGoal = node;
 	}
 	
 	/* -----------------
@@ -255,7 +265,7 @@ public class Graphe implements Serializable{
 			} else {
 				myNode.update(n);	//this will update the data in myNode, if n is more recent
 				
-				boolean condition;
+				/*boolean condition;
 				switch(goalType) {
 				case WalkToGoalBehaviour.OPEN:
 					condition = myNode.isVisited();
@@ -274,7 +284,7 @@ public class Graphe implements Serializable{
 					condition = false;
 					break;
 				}
-				/*//TO DO redo this; setNewGoal should be called after each step
+				//TO DO redo this; setNewGoal should be called after each step
 				if ((condition)||(myNode.equals(goalNode))) { // if the goal has been visited by the other agent
 					setNewGoal(goalType);
 				}*/
@@ -285,7 +295,9 @@ public class Graphe implements Serializable{
 	private boolean isGoalType(Node n) {
 		return ((goalType == WalkToGoalBehaviour.OPEN) && (!n.isVisited()))|| 
 				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.GOLD)) && (n.getquantityGold() != 0)) || 
-				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getquantityDiam() != 0));
+				(((goalType == WalkToGoalBehaviour.TREASURE) || (goalType == WalkToGoalBehaviour.DIAMOND)) && (n.getquantityDiam() != 0)) ||
+				((goalType == WalkToGoalBehaviour.SILO) && (n.getNeighbours().contains(siloNode))) ||
+				((goalType == WalkToGoalBehaviour.GOAL) && (n.getName().equals(distantGoal)));
 	}
 	
 	/**

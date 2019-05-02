@@ -12,6 +12,7 @@ import jade.core.behaviours.SimpleBehaviour;
  * 		<li><b>TREASURE</b> for treasure-holding nodes (explorer in lockpicking phase)</li>
  * 		<li><b>GOLD</b>/<b>DIAMOND</b> for nodes containing gold/diamond (collectors, according to their TreasureType)</li>
  * 		<li><b>SILO</b> for the tile on which the silo has last been seen (collectors with full backpack)</li>
+ * 		<li><b>GOAL</b> for a specific goal node</li>
  * </ul>
  * 
  * WalkBehaviour's onEnd will return 2 as long as the goal isn't reached; once it is, it returns 1, allowing the WalkToGoalBehaviour to reach his final state

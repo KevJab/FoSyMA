@@ -1,16 +1,8 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import dataStructures.tuple.Couple;
-import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
-import eu.su.mas.dedaleEtu.mas.object.Node;
 import jade.core.behaviours.SimpleBehaviour;
 
 public class MyExploSoloBehaviour extends SimpleBehaviour{
@@ -19,22 +11,11 @@ public class MyExploSoloBehaviour extends SimpleBehaviour{
 	
 	private static final long serialVersionUID = 8578659731496787661L;
 	
-	/**
-	 * Nodes known but not yet visited
-	 */
-	private List<String> openNodes;
-	/**
-	 * Visited nodes
-	 */
-	private Set<String> closedNodes;
 	
-	private Graphe myMap;
 
 	public MyExploSoloBehaviour(AbstractDedaleAgent myagent, Graphe mp) {
 		super(myagent);
-		this.openNodes=new ArrayList<String>();
-		this.closedNodes=new HashSet<String>();
-		this.myMap = mp;
+		
 	}
 
 	@Override

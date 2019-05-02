@@ -21,7 +21,7 @@ public class Node implements Serializable{
 	
 	private int quantityDiam;
 	private boolean lockedDiam;
-	private int strengthNeededDiam;
+	private int strengthNeededDiam;	// same as above
 	
 	private boolean visited;
 	private List<String> neighbours;

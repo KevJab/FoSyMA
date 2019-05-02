@@ -1,6 +1,5 @@
 package eu.su.mas.dedaleEtu.mas.behaviours.given;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,7 +11,6 @@ import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SimpleBehaviour;
 
 

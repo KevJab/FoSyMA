@@ -13,8 +13,8 @@ public class EchoFloodingBehaviour extends FSMBehaviour {
 	public EchoFloodingBehaviour(MyAbstractAgent a) {
 		super(a);
 		
-		this.registerFirstState(new WaitBehaviour(myAgent, WaitBehaviour.ECHO), "Wait");
-		this.registerState(new SayHelloBehaviour(a, SayHelloBehaviour.ECHO), "Inform"); 
+		this.registerFirstState(new SayHelloBehaviour(a, SayHelloBehaviour.ECHO), "Inform"); 
+		this.registerState(new WaitBehaviour(myAgent, WaitBehaviour.ECHO), "Wait");
 		this.registerLastState(new OneShotBehaviour() {
 			private static final long serialVersionUID = 8357221004356169749L;
 			public void action() {}

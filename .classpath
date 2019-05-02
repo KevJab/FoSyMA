@@ -30,6 +30,6 @@
 	<classpathentry kind="lib" path="libs/delta/delta-mas.jar"/>
 	<classpathentry kind="lib" path="libs/junit/junit-4.12.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/users/Etu3/3534093/Documents/M1/S2/FoSyMa/DedaleEtuFull2018/libs/dedale/dedale.jar"/>
+	<classpathentry kind="lib" path="/home/kevjab/Documents/M1/S2/FoSyMA/FoSyMA/libs/dedale/dedale.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

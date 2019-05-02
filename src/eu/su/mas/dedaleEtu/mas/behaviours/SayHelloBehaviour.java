@@ -57,6 +57,7 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 				try {
 					msg.setContentObject(myagent.getMyMap());
 					msg.setInReplyTo(myagent.getMyKnowledge());
+					msg.setReplyWith(Integer.toString(myagent.getDistanceToSilo()));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

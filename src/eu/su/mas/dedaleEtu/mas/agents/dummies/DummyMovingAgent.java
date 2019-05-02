@@ -34,7 +34,7 @@ public class DummyMovingAgent extends AbstractDedaleAgent{
 		super.setup();
 
 		//get the parameters given into the object[]
-		final Object[] args = getArguments();
+		//final Object[] args = getArguments();
 		
 		//use them as parameters for your behaviours is you want
 		

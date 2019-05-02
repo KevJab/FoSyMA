@@ -35,7 +35,7 @@ public class SayHello extends OneShotBehaviour{
 	public void action() {
 		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
 		
-		String myPosition=(myagent).getCurrentPosition();
+		//String myPosition=(myagent).getCurrentPosition();
 		
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription () ;

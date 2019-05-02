@@ -22,12 +22,18 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected Graphe myMap = new Graphe();
 	protected boolean youMove = false;		// boolean value to send to another agent, indicating whether he moves or not
 	protected Set<String> commonKnowledge = new HashSet<>();	// a list of all AIDs (in String form) of agents I am certain know the whole map
+	
+	protected String goalNode = null;
+	protected String siloNode = null;
+	protected int distanceToSilo = Integer.MAX_VALUE;
+	protected AID parent = null;
 	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
 	
 	protected void setup() {
 		super.setup();
 		
 		NB_AGENTS++;
+		commonKnowledge.add(this.getAID().toString());	//even though it is not true at initialization, it will be true (and needed) when commonKnowledge will be used
 	}
 	
 	/**
@@ -101,6 +107,15 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		return res;
 	}
 	
+	public void setSiloNode(String node) {
+		siloNode = node;
+		myMap.setSiloNode(node);
+	}
+	
+	public void setGoalNode(String node) {
+		goalNode = node;
+	}
+	
 	public void register() {
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID()); // The agent AID
@@ -125,5 +140,20 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	}
 	
 	public abstract void action();
+
+	/**
+	 * When receiving a message 
+	 * @param nbr_dts
+	 */
+	public void setDistanceToSilo(AID nbr, int nbr_dts) {
+		if(nbr_dts < distanceToSilo - 1) {
+			distanceToSilo = nbr_dts + 1;
+			parent = nbr;
+		}
+	}
+	
+	public int getDistanceToSilo() {
+		return distanceToSilo;
+	}
 	
 }

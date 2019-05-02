@@ -86,14 +86,37 @@ public class WaitBehaviour extends WakerBehaviour {
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {	
 			endVal = 2;	//[type] message received
-			((MyAbstractAgent) this.myAgent).setInterlocuteur(msg.getSender());
+			myagent.setInterlocuteur(msg.getSender());
 			System.out.println(msg.getSender().getLocalName()+" replied to " + this.myAgent.getLocalName());
 			
 			String[] pingresponse_info;
 			switch (type) {
 			case PING:
-				pingresponse_info = msg.getContent().split(",");	// message should be "wish_node,cur_node"
-				myagent.setOtherInfo(pingresponse_info[0], pingresponse_info[1]);
+				if (msg.getOntology().equals("echo")) {
+					// getting the full map for myself
+					Graphe g = null;
+					try {
+						g = (Graphe) msg.getContentObject();
+					} catch (UnreadableException e) {
+						e.printStackTrace();
+					}
+					myagent.getMyMap().merge(g);
+					
+					// getting his knowledge
+					Set<String> other_knowledge = new HashSet<>(); 
+					for(String s : msg.getInReplyTo().split(" ")) {
+						other_knowledge.add(s);
+					}
+					myagent.mergeKnowledge(other_knowledge);
+					
+					// getting the other's distance to the silo
+					myagent.setDistanceToSilo(msg.getSender(), Integer.parseInt(msg.getReplyWith()));
+					
+					endVal = 3; 
+				} else {
+					pingresponse_info = msg.getContent().split(",");	// message should be "wish_node,cur_node"
+					myagent.setOtherInfo(pingresponse_info[0], pingresponse_info[1]);
+				}
 				break;
 			case PINGRESPONSE:
 				pingresponse_info = msg.getContent().split(","); 	// message received should be "need_to_update,wish_node,cur_node"
@@ -113,13 +136,24 @@ public class WaitBehaviour extends WakerBehaviour {
 				System.out.println(this.myAgent.getLocalName()+"<---- Graphe received from "+msg.getSender().getLocalName());
 				break;
 			case ECHO:
-				String[] agents_AIDs = msg.getInReplyTo().split(" ");
+				// getting the full map for myself
+				Graphe gr = null;
+				try {
+					gr = (Graphe) msg.getContentObject();
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+				myagent.getMyMap().merge(gr);
 				
-				Set<String> other_knowledge = new HashSet<>();
-				for (String aid : agents_AIDs)
-					other_knowledge.add(aid);
-				
+				// getting his knowledge
+				Set<String> other_knowledge = new HashSet<>(); 
+				for(String s : msg.getInReplyTo().split(" ")) {
+					other_knowledge.add(s);
+				}
 				myagent.mergeKnowledge(other_knowledge);
+				
+				// getting the other's distance to the silo
+				myagent.setDistanceToSilo(msg.getSender(), Integer.parseInt(msg.getReplyWith()));
 				
 				endVal = (myagent.isCommonKnowledge()) ? 2 : 1;		
 				break;
@@ -146,7 +180,9 @@ public class WaitBehaviour extends WakerBehaviour {
 				break;
 			}
 			System.out.println(this.myAgent.getLocalName()+ " is sad, nobody wants to talk with them; exiting "+ wait + " state");
-			endVal = 1;	//waited too long; 
+			endVal = 1;	//waited too long
+			if ((type == ECHO) && (myagent.isCommonKnowledge()))	// otherwise there may be an infinite loop
+				endVal = 2;
 		}
 	}
 	

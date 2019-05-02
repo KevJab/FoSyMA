@@ -1,16 +1,23 @@
 package eu.su.mas.dedaleEtu.mas.agents;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import dataStructures.tuple.Tuple3;
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.given.RandomWalkBehaviour;
+import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 
 public class MySiloAgent extends MyAbstractAgent {
 	
 	
 	private static final long serialVersionUID = -6688123700288962519L;
+	
+	private Map<AID, Tuple3<Observation, Integer, Integer>> agent_info = new HashMap<>();
 
 	protected void setup(){
 
