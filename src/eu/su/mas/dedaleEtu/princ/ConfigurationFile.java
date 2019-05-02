@@ -16,18 +16,18 @@ public final class ConfigurationFile {
 	 * 
 	 *****************************/
 
-	public static boolean PLATFORMisDISTRIBUTED= true;
-	public static boolean COMPUTERisMAIN= false;
+	public static boolean PLATFORMisDISTRIBUTED= false;
+	public static boolean COMPUTERisMAIN= !PLATFORMisDISTRIBUTED;
 
 	//Connexion locale
-	/*public static String PLATFORM_HOSTNAME="127.0.0.1";
-	public static String PLATFORM_ID="Ithaq";
-	public static Integer PLATFORM_PORT=8888;*/
-	
-	//Connexion distante
-	public static String PLATFORM_HOSTNAME="PPTI-14-408-07";
+	public static String PLATFORM_HOSTNAME="127.0.0.1";
 	public static String PLATFORM_ID="Ithaq";
 	public static Integer PLATFORM_PORT=8888;
+	
+	//Connexion distante
+	/*public static String PLATFORM_HOSTNAME="PPTI-14-408-07";
+	public static String PLATFORM_ID="Ithaq";
+	public static Integer PLATFORM_PORT=8888;*/
 	
 	public static String LOCAL_CONTAINER_NAME=PLATFORM_ID+"_"+"Machine13";
 	public static String LOCAL_CONTAINER2_NAME=PLATFORM_ID+"_"+"container2";
@@ -78,7 +78,7 @@ public final class ConfigurationFile {
 	 * Must'nt be null as it describes the agents capabilities on the map
 	 */
 	//public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2018-entities";
-	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/test-entities";
+	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/monoAgent-entities";
 
 	
 	/************************************
