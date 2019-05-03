@@ -59,7 +59,6 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 				try {
 					msg.setContentObject(myagent.getMyMap());
 					msg.setInReplyTo(myagent.getMyKnowledge());
-					msg.setReplyWith(Integer.toString(myagent.getDistanceToSilo()));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -74,12 +73,13 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 			//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
 			((AbstractDedaleAgent)myagent).sendMessage(msg);
 			
-			if (type == PING) 
+			/*if (type == PING) 
 				System.out.println(this.myAgent.getLocalName()+" says : Hello? anyone here?");
 			else if (type == ECHO) 
-				System.out.println(this.myAgent.getLocalName()+" says : The map is complete! Here it is!");
+				System.out.println(this.myAgent.getLocalName()+" says : The map is complete! Here it is!");*/
 				
-			
+			if ((type == ECHO) && (myagent.isCommonKnowledge()))	// otherwise there may be an infinite loop
+				endVal = 2;
 			
 		} catch (FIPAException e) {
 			e.printStackTrace();

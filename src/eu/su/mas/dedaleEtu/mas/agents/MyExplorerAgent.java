@@ -7,7 +7,6 @@ import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.BlockingWaitBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.EchoFloodingBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.WaitBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
@@ -39,10 +38,10 @@ public class MyExplorerAgent extends MyAbstractAgent {
 		FSMBehaviour fsm = new FSMBehaviour(this);
 		fsm.registerFirstState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.OPEN), "Explore");
 		fsm.registerState(new EchoFloodingBehaviour(this, false), "Echo");
-		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.MISSION), "Wait&SendMission");
+		fsm.registerState(new BlockingWaitBehaviour(this, BlockingWaitBehaviour.MISSION), "Wait&SendMission");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.GOAL), "WalkToTreasure");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.SILO), "WalkToSilo");
-		fsm.registerState(new BlockingWaitBehaviour(this, false), "WaitMapUpdate");
+		fsm.registerState(new BlockingWaitBehaviour(this, BlockingWaitBehaviour.AGENT), "WaitMapUpdate");
 		fsm.registerLastState(new EchoFloodingBehaviour(this, true), "EchoWin");
 		
 		fsm.registerDefaultTransition("Echo", "Wait&SendMission");

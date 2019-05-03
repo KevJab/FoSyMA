@@ -40,7 +40,7 @@ public class MySiloAgent extends MyAbstractAgent {
 		fsm.registerState(new EchoFloodingBehaviour(this, false), "Echo");
 		fsm.registerState(new GiveGoalBehaviour(this, true), "GiveMissions");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.GOAL), "MyPos");
-		fsm.registerState(new BlockingWaitBehaviour(this, true), "WaitMsg");
+		fsm.registerState(new BlockingWaitBehaviour(this, BlockingWaitBehaviour.SILO), "WaitMsg");
 		fsm.registerState(new GiveGoalBehaviour(this, false), "NewMissions");
 		fsm.registerLastState(new EchoFloodingBehaviour(this, true), "EchoWin");
 		

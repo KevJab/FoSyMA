@@ -25,8 +25,7 @@ public class WaitBehaviour extends WakerBehaviour {
 	public static final int PINGRESPONSE = 2;
 	public static final int SEND = 3;
 	public static final int ECHO = 4;
-	public static final int MISSION = 5;
-	public static final int WIN = 6;
+	public static final int WIN = 5;
 	
 	private int type;
 
@@ -94,7 +93,7 @@ public class WaitBehaviour extends WakerBehaviour {
 			String[] pingresponse_info;
 			switch (type) {
 			case PING:
-				if (msg.getOntology().equals("echo")) {
+				if ("echo".equals(msg.getOntology())) {
 					// getting the full map for myself
 					Graphe g = null;
 					try {
@@ -110,9 +109,6 @@ public class WaitBehaviour extends WakerBehaviour {
 						other_knowledge.add(s);
 					}
 					myagent.mergeKnowledge(other_knowledge);
-					
-					// getting the other's distance to the silo
-					myagent.setDistanceToSilo(msg.getSender(), Integer.parseInt(msg.getReplyWith()));
 					
 					endVal = 3; 
 				} else {
@@ -154,9 +150,6 @@ public class WaitBehaviour extends WakerBehaviour {
 				}
 				myagent.mergeKnowledge(other_knowledge);
 				
-				// getting the other's distance to the silo
-				myagent.setDistanceToSilo(msg.getSender(), Integer.parseInt(msg.getReplyWith()));
-				
 				endVal = (myagent.isCommonKnowledge()) ? 2 : 1;		
 				break;
 			default:
@@ -183,8 +176,6 @@ public class WaitBehaviour extends WakerBehaviour {
 			}
 			System.out.println(this.myAgent.getLocalName()+ " is sad, nobody wants to talk with them; exiting "+ wait + " state");
 			endVal = 1;	//waited too long
-			if ((type == ECHO) && (myagent.isCommonKnowledge()))	// otherwise there may be an infinite loop
-				endVal = 2;
 		}
 	}
 	

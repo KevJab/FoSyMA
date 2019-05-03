@@ -12,8 +12,8 @@ public class EchoFloodingBehaviour extends FSMBehaviour {
 	
 	public EchoFloodingBehaviour(MyAbstractAgent a, boolean isDone) {
 		super(a);
-		//FIXME rework this
 		if(isDone) {
+			
 			this.registerFirstState(new SayHelloBehaviour(a, SayHelloBehaviour.WIN), "Inform"); 
 			this.registerState(new WaitBehaviour(myAgent, WaitBehaviour.WIN), "Wait");
 			this.registerLastState(new OneShotBehaviour() {
@@ -21,7 +21,9 @@ public class EchoFloodingBehaviour extends FSMBehaviour {
 
 				public void action() {}
 			}, "End");
+			
 		} else {
+			
 			this.registerFirstState(new SayHelloBehaviour(a, SayHelloBehaviour.ECHO), "Inform"); 
 			this.registerState(new WaitBehaviour(myAgent, WaitBehaviour.ECHO), "Wait");
 			this.registerLastState(new OneShotBehaviour() {
@@ -29,11 +31,13 @@ public class EchoFloodingBehaviour extends FSMBehaviour {
 				public void action() {}
 			}, "End");
 			
-			this.registerTransition("Wait", "Inform", 1);
-			this.registerTransition("Wait", "End", 2);
-			
-			this.registerDefaultTransition("Inform", "Wait");
 		}
+		
+		
+		this.registerTransition("Inform", "Wait", 1);
+		this.registerTransition("Inform", "End", 2);
+		
+		this.registerDefaultTransition("Wait", "Inform");
 	}
 	
 	@Override

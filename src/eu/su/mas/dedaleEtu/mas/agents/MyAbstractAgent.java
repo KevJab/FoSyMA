@@ -3,6 +3,7 @@ package eu.su.mas.dedaleEtu.mas.agents;
 import java.util.HashSet;
 import java.util.Set;
 
+import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.AID;
@@ -27,8 +28,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected String siloNode = null;
 	public String siloName = null;
 	protected int distanceToSilo = Integer.MAX_VALUE;
-	protected AID parent = null;
-	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();
+	protected AID leader = null;
 	
 	protected void setup() {
 		super.setup();
@@ -113,8 +113,9 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		myMap.setSiloNode(node);
 	}
 	
-	public void setGoalNode(String node) {
-		goalNode = node;
+	public void setGoalNode(Couple<String, AID> goal) {
+		goalNode = goal.getLeft();
+		leader = goal.getRight();
 	}
 	
 	public void register() {
@@ -141,20 +142,5 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	}
 	
 	public abstract void action();
-
-	/**
-	 * When receiving a message 
-	 * @param nbr_dts
-	 */
-	public void setDistanceToSilo(AID nbr, int nbr_dts) {
-		if(nbr_dts < distanceToSilo - 1) {
-			distanceToSilo = nbr_dts + 1;
-			parent = nbr;
-		}
-	}
-	
-	public int getDistanceToSilo() {
-		return distanceToSilo;
-	}
 	
 }
