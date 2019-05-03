@@ -71,6 +71,8 @@ public class WaitBehaviour extends WakerBehaviour {
 		case SEND:
 			performative = ACLMessage.INFORM;
 			break;
+		case WIN:
+			performative = ACLMessage.CONFIRM;
 		default:
 			performative = -1;
 			break;
@@ -152,6 +154,20 @@ public class WaitBehaviour extends WakerBehaviour {
 				
 				endVal = (myagent.isCommonKnowledge()) ? 2 : 1;		
 				break;
+			case WIN:
+				Graphe gw = null;
+				try {
+					gw = (Graphe) msg.getContentObject();
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+				myagent.getMyMap().merge(gw);
+				
+				Set<String> other_vKnowledge = new HashSet<>(); 
+				for(String s : msg.getInReplyTo().split(" ")) {
+					other_vKnowledge.add(s);
+				}
+				myagent.mergeVKnowledge(other_vKnowledge);
 			default:
 				break;
 			}

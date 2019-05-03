@@ -23,11 +23,11 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected Graphe myMap = new Graphe();
 	protected boolean youMove = false;		// boolean value to send to another agent, indicating whether he moves or not
 	protected Set<String> commonKnowledge = new HashSet<>();	// a list of all AIDs (in String form) of agents I am certain know the whole map
+	protected Set<String> victoryKnowledge = new HashSet<>();
 	
 	protected String goalNode = null;
 	protected String siloNode = null;
 	public String siloName = null;
-	protected int distanceToSilo = Integer.MAX_VALUE;
 	protected AID leader = null;
 	
 	protected void setup() {
@@ -35,6 +35,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		
 		NB_AGENTS++;
 		commonKnowledge.add(this.getAID().toString());	//even though it is not true at initialization, it will be true (and needed) when commonKnowledge will be used
+		victoryKnowledge.add(this.getAID().toString()); //same
 	}
 	
 	/**
@@ -86,17 +87,20 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		youMove = value;
 	}
 	
-	public void addKnowledge(AID other) {
-		commonKnowledge.add(this.getAID().toString());
-		commonKnowledge.add(other.toString());
-	}
-	
 	public void mergeKnowledge(Set<String> other) {
 		commonKnowledge.addAll(other);
 	}
 	
+	public void mergeVKnowledge(Set<String> other) {
+		victoryKnowledge.addAll(other);
+	}
+	
 	public boolean isCommonKnowledge() {
 		return commonKnowledge.size() == NB_AGENTS;
+	}
+	
+	public boolean isVictoryKnowledge() {
+		return victoryKnowledge.size() == NB_AGENTS;
 	}
 	
 	public String getMyKnowledge() {
@@ -108,6 +112,15 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		return res;
 	}
 	
+	public String getMyVKnowledge() {
+		String res = "";
+		
+		for(String agent : victoryKnowledge)
+			res += agent + " ";
+		
+		return res;
+	}
+
 	public void setSiloNode(String node) {
 		siloNode = node;
 		myMap.setSiloNode(node);

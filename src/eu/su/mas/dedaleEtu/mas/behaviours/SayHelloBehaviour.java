@@ -46,40 +46,62 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 		try {
 			result = DFService.search( myagent , dfd);
 			//You get the list of all the agents (AID) of said type
-			
-			
-			//A message is defined by : a performative, a sender, a set of receivers, (a protocol),(a content (and/or contentOBject))
-			ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
-			msg.setSender(myagent.getAID());
-			
-			if (type == PING) 
-				msg.setContent(myagent.getMyMap().getGoal() +","+myagent.getMyMap().getMyPos());
-			else if (type == ECHO) {
-				msg.setOntology("echo");
+			if (type == WIN) {
+				ACLMessage msg = new ACLMessage(ACLMessage.CONFIRM);
+				msg.setSender(myagent.getAID());
+				
 				try {
 					msg.setContentObject(myagent.getMyMap());
-					msg.setInReplyTo(myagent.getMyKnowledge());
+					msg.setInReplyTo(myagent.getMyVKnowledge());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-			// I'm not sending a message to myself
-			for (DFAgentDescription dfad : result){
-				System.out.println("I am "+ myagent.getAID() + "and the DF tells me about " + dfad.getName());
-				if(!dfad.getName().equals(myagent.getAID()))
-					msg.addReceiver(dfad.getName());
-			}
-			
-			//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
-			((AbstractDedaleAgent)myagent).sendMessage(msg);
-			
-			/*if (type == PING) 
-				System.out.println(this.myAgent.getLocalName()+" says : Hello? anyone here?");
-			else if (type == ECHO) 
-				System.out.println(this.myAgent.getLocalName()+" says : The map is complete! Here it is!");*/
 				
-			if ((type == ECHO) && (myagent.isCommonKnowledge()))	// otherwise there may be an infinite loop
-				endVal = 2;
+				// I'm not sending a message to myself
+				for (DFAgentDescription dfad : result){
+					System.out.println("I am "+ myagent.getAID() + "and the DF tells me about " + dfad.getName());
+					if(!dfad.getName().equals(myagent.getAID()))
+						msg.addReceiver(dfad.getName());
+				}
+				
+				//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
+				((AbstractDedaleAgent)myagent).sendMessage(msg);
+				
+				
+			} else {
+				//A message is defined by : a performative, a sender, a set of receivers, (a protocol),(a content (and/or contentOBject))
+				ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+				msg.setSender(myagent.getAID());
+				
+				if (type == PING) 
+					msg.setContent(myagent.getMyMap().getGoal() +","+myagent.getMyMap().getMyPos());
+				else if (type == ECHO) {
+					msg.setOntology("echo");
+					try {
+						msg.setContentObject(myagent.getMyMap());
+						msg.setInReplyTo(myagent.getMyKnowledge());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				// I'm not sending a message to myself
+				for (DFAgentDescription dfad : result){
+					System.out.println("I am "+ myagent.getAID() + "and the DF tells me about " + dfad.getName());
+					if(!dfad.getName().equals(myagent.getAID()))
+						msg.addReceiver(dfad.getName());
+				}
+				
+				//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
+				((AbstractDedaleAgent)myagent).sendMessage(msg);
+				
+				/*if (type == PING) 
+					System.out.println(this.myAgent.getLocalName()+" says : Hello? anyone here?");
+				else if (type == ECHO) 
+					System.out.println(this.myAgent.getLocalName()+" says : The map is complete! Here it is!");*/
+					
+				if ((type == ECHO) && (myagent.isCommonKnowledge()))	// otherwise there may be an infinite loop
+					endVal = 2;
+			}
 			
 		} catch (FIPAException e) {
 			e.printStackTrace();
