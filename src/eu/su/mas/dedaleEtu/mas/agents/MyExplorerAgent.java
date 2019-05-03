@@ -5,14 +5,17 @@ import java.util.List;
 
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
+import eu.su.mas.dedaleEtu.mas.behaviours.BlockingWaitBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.EchoFloodingBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.WaitBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
 
 public class MyExplorerAgent extends MyAbstractAgent {
 	
 	private static final long serialVersionUID = -6431752876590433727L;
+	private boolean isLeader = false;
 	
 	
 	
@@ -33,35 +36,27 @@ public class MyExplorerAgent extends MyAbstractAgent {
 
 		List<Behaviour> lb=new ArrayList<Behaviour>();
 		
-		/************************************************
-		 * 
-		 * ADD the behaviours of the Dummy Moving Agent
-		 * 
-		 ************************************************/
-		
-		//lb.add(new MyExploSoloBehaviour(this,this.myMap));
-		//lb.add(new ReceivedMessageBehaviour(this));
-		
-		
 		FSMBehaviour fsm = new FSMBehaviour(this);
 		fsm.registerFirstState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.OPEN), "Explore");
-		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.TREASURE), "Lockpick");
-		// this behaviour does nothing else other than terminate the FSM
-		fsm.registerLastState(new OneShotBehaviour() {private static final long serialVersionUID = 1L;
-														public void action() {}}, "End");
+		fsm.registerState(new EchoFloodingBehaviour(this, false), "Echo");
+		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.MISSION), "Wait&SendMission");
+		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.GOAL), "WalkToTreasure");
+		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.SILO), "WalkToSilo");
+		fsm.registerState(new BlockingWaitBehaviour(this, false), "WaitMapUpdate");
+		fsm.registerLastState(new EchoFloodingBehaviour(this, true), "EchoWin");
 		
-		fsm.registerTransition("Explore", "Explore",1);
-		fsm.registerTransition("Explore", "Lockpick", 2);
+		fsm.registerDefaultTransition("Echo", "Wait&SendMission");
+		fsm.registerDefaultTransition("Wait&SendMission", "WalkToTreasure");
+		fsm.registerDefaultTransition("WalkToTreasure", "WalkToSilo");
+		fsm.registerDefaultTransition("WalkToSilo", "WaitMapUpdate");
 		
-		fsm.registerTransition("Lockpick", "Lockpick", 1);
-		fsm.registerTransition("Lockpick", "End", 2);
+		fsm.registerTransition("Explore", "Explore", 1);
+		fsm.registerTransition("Explore", "Echo", 2);
+		
+		fsm.registerTransition("WaitMapUpdate", "Wait&SendMission", 1);
+		fsm.registerTransition("WaitMapUpdate", "EchoWin", 2);
 				
 		lb.add(fsm);
-		
-		/***
-		 * MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
-		 */
-		
 		
 		addBehaviour(new startMyBehaviours(this,lb));
 		
@@ -73,8 +68,16 @@ public class MyExplorerAgent extends MyAbstractAgent {
 
 	@Override
 	public void action() {
-		this.openLock(Observation.DIAMOND);
-		this.openLock(Observation.GOLD);
+		if (isLeader) {
+			this.openLock(Observation.DIAMOND);
+			myMap.unlock(Observation.DIAMOND);
+			
+			this.openLock(Observation.GOLD);
+			myMap.unlock(Observation.GOLD);
+			
+			isLeader = false;
+		}
+		
 	}
 	
 	

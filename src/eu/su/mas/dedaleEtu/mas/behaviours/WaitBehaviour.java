@@ -25,12 +25,14 @@ public class WaitBehaviour extends WakerBehaviour {
 	public static final int PINGRESPONSE = 2;
 	public static final int SEND = 3;
 	public static final int ECHO = 4;
+	public static final int MISSION = 5;
+	public static final int WIN = 6;
 	
 	private int type;
 
 	public WaitBehaviour(Agent a, int type) {
-		//TODO maybe 2 seconds of wait is too much
-		super(a, 1000);
+		//TODO vary time
+		super(a, 500);
 		this.type = type;
 	}
 	

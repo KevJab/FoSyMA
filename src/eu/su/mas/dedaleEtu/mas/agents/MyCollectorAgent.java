@@ -3,25 +3,17 @@ package eu.su.mas.dedaleEtu.mas.agents;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
-import eu.su.mas.dedaleEtu.mas.behaviours.EmptyBackpackBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.LootBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.BlockingWaitBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.EchoFloodingBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.WaitBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.WalkToGoalBehaviour;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
 
 public class MyCollectorAgent extends MyAbstractAgent {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 555938552790588773L;
-	
-	//TODO make Collectors initially Explorers too
-	//TODO once the whole map is explored, define an order for the treasures
-	
 	
 	protected void setup(){
 
@@ -33,33 +25,25 @@ public class MyCollectorAgent extends MyAbstractAgent {
 
 		List<Behaviour> lb=new ArrayList<Behaviour>();
 		
-		int type;
-		if (this.getMyTreasureType() == Observation.DIAMOND) {
-			type = WalkToGoalBehaviour.DIAMOND;
-		} else if (this.getMyTreasureType() == Observation.GOLD) {
-			type = WalkToGoalBehaviour.GOLD;
-		} else { //Observation.ANY_TREASURE
-			type = WalkToGoalBehaviour.TREASURE;
-		}
-		
 		FSMBehaviour fsm = new FSMBehaviour(this);
-		fsm.registerFirstState(new WalkToGoalBehaviour(this, type), "WalkToTreasure");
-		fsm.registerState(new LootBehaviour(this), "Loot");
+		fsm.registerFirstState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.OPEN), "Explore");
+		fsm.registerState(new EchoFloodingBehaviour(this, false), "Echo");
+		fsm.registerState(new WaitBehaviour(this, WaitBehaviour.MISSION), "Wait&SendMission");
+		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.GOAL), "WalkToTreasure");
 		fsm.registerState(new WalkToGoalBehaviour(this, WalkToGoalBehaviour.SILO), "WalkToSilo");
-		fsm.registerState(new EmptyBackpackBehaviour(this), "EmptyBackpack");
-		// this behaviour does nothing else other than terminate the FSM
-		fsm.registerLastState(new OneShotBehaviour() {private static final long serialVersionUID = 1L; public void action() {}}, "End");
+		fsm.registerState(new BlockingWaitBehaviour(this, false), "WaitMapUpdate");
+		fsm.registerLastState(new EchoFloodingBehaviour(this, true), "EchoWin");
 		
-		fsm.registerDefaultTransition("WalkToTreasure", "Loot");
+		fsm.registerDefaultTransition("Echo", "Wait&SendMission");
+		fsm.registerDefaultTransition("Wait&SendMission", "WalkToTreasure");
+		fsm.registerDefaultTransition("WalkToTreasure", "WalkToSilo");
+		fsm.registerDefaultTransition("WalkToSilo", "WaitMapUpdate");
 		
-		fsm.registerTransition("Loot", "WalkToSilo", 1);
-		fsm.registerTransition("Loot", "WalkToTreasure", 2);
+		fsm.registerTransition("Explore", "Explore", 1);
+		fsm.registerTransition("Explore", "Echo", 2);
 		
-		fsm.registerTransition("WalkToSilo", "EmptyBackpack", 1);
-		fsm.registerTransition("WalkToSilo", "WalkToSilo", 2);
-		
-		fsm.registerTransition("EmptyBackpack", "WalkToTreasure", 1);
-		fsm.registerTransition("EmptyBackpack", "End", 2);
+		fsm.registerTransition("WaitMapUpdate", "Wait&SendMission", 1);
+		fsm.registerTransition("WaitMapUpdate", "EchoWin", 2);
 		
 		lb.add(fsm);
 		
@@ -71,7 +55,9 @@ public class MyCollectorAgent extends MyAbstractAgent {
 
 	@Override
 	public void action() {
-		this.pick();
+		int qtyPicked = this.pick();
+		myMap.unlock(this.getMyTreasureType());
+		myMap.pick(this.getMyTreasureType(), qtyPicked);
 	}
 
 }

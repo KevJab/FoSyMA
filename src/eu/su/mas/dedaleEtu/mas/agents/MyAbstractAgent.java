@@ -25,6 +25,7 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	
 	protected String goalNode = null;
 	protected String siloNode = null;
+	public String siloName = null;
 	protected int distanceToSilo = Integer.MAX_VALUE;
 	protected AID parent = null;
 	//protected HashMap<String, Graphe> allAgentsInfo = new HashMap<>();

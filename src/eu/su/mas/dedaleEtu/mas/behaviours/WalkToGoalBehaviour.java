@@ -1,6 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
+import eu.su.mas.dedaleEtu.mas.agents.MyCollectorAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -103,6 +104,15 @@ public class WalkToGoalBehaviour extends FSMBehaviour {
 		case GOLD:case DIAMOND:
 			if(myMap.noMoreTreasure(myType))
 				return 2;
+			return 1;
+		case SILO:
+			if (this.myAgent instanceof MyCollectorAgent) {
+				MyCollectorAgent myagent = ((MyCollectorAgent)this.myAgent);
+				myagent.emptyMyBackPack(myagent.siloName);
+			}
+			return 1;
+		case GOAL:
+			((MyAbstractAgent) this.myAgent).action();
 			return 1;
 		default:
 			return 1;

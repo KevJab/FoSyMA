@@ -17,11 +17,13 @@ public class Node implements Serializable{
 	private String name;
 	private int quantityGold;
 	private boolean lockedGold;
-	private int strengthNeededGold;	// TODO not used yet; can be useful for strategies
+	private int strengthNeededGold;
+	private int lockpickingNeededGold;
 	
 	private int quantityDiam;
 	private boolean lockedDiam;
-	private int strengthNeededDiam;	// same as above
+	private int strengthNeededDiam;
+	private int lockpickingNeededDiam;
 	
 	private boolean visited;
 	private List<String> neighbours;
@@ -108,6 +110,14 @@ public class Node implements Serializable{
 		return quantityDiam;
 	}
 	
+	public int getStrengthNeededGold() {
+		return strengthNeededGold;
+	}
+
+	public int getStrengthNeededDiam() {
+		return strengthNeededDiam;
+	}
+
 	public boolean isLocked(Observation treasureType) {
 		switch(treasureType) {
 		case GOLD:
@@ -219,4 +229,9 @@ public class Node implements Serializable{
 		lastUpdateDate = new Date();
 	}
 
+	public boolean canOpen(boolean isDiam, int strength, int lockpick) {
+		if (isDiam)
+			return (strength >= strengthNeededDiam) && (lockpick >= lockpickingNeededDiam);
+		return (strength >= strengthNeededGold) && (lockpick >= lockpickingNeededGold);
+	}
 }

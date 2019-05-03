@@ -10,20 +10,30 @@ public class EchoFloodingBehaviour extends FSMBehaviour {
 	
 	private boolean everyoneKnows;
 	
-	public EchoFloodingBehaviour(MyAbstractAgent a) {
+	public EchoFloodingBehaviour(MyAbstractAgent a, boolean isDone) {
 		super(a);
-		
-		this.registerFirstState(new SayHelloBehaviour(a, SayHelloBehaviour.ECHO), "Inform"); 
-		this.registerState(new WaitBehaviour(myAgent, WaitBehaviour.ECHO), "Wait");
-		this.registerLastState(new OneShotBehaviour() {
-			private static final long serialVersionUID = 8357221004356169749L;
-			public void action() {}
-		}, "End");
-		
-		this.registerTransition("Wait", "Inform", 1);
-		this.registerTransition("Wait", "End", 2);
-		
-		this.registerDefaultTransition("Inform", "Wait");
+		//FIXME rework this
+		if(isDone) {
+			this.registerFirstState(new SayHelloBehaviour(a, SayHelloBehaviour.WIN), "Inform"); 
+			this.registerState(new WaitBehaviour(myAgent, WaitBehaviour.WIN), "Wait");
+			this.registerLastState(new OneShotBehaviour() {
+				private static final long serialVersionUID = 8357221004356169749L;
+
+				public void action() {}
+			}, "End");
+		} else {
+			this.registerFirstState(new SayHelloBehaviour(a, SayHelloBehaviour.ECHO), "Inform"); 
+			this.registerState(new WaitBehaviour(myAgent, WaitBehaviour.ECHO), "Wait");
+			this.registerLastState(new OneShotBehaviour() {
+				private static final long serialVersionUID = 8357221004356169749L;
+				public void action() {}
+			}, "End");
+			
+			this.registerTransition("Wait", "Inform", 1);
+			this.registerTransition("Wait", "End", 2);
+			
+			this.registerDefaultTransition("Inform", "Wait");
+		}
 	}
 	
 	@Override

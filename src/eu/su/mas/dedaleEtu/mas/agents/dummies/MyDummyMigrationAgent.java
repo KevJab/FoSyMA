@@ -1,7 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
-import eu.su.mas.dedaleEtu.mas.behaviours.MigrationBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.given.MigrationBehaviour;
 
 public class MyDummyMigrationAgent extends AbstractDedaleAgent {
 
