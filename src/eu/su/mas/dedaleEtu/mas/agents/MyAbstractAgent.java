@@ -1,9 +1,13 @@
 package eu.su.mas.dedaleEtu.mas.agents;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import dataStructures.tuple.Couple;
+import dataStructures.tuple.Tuple4;
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.AID;
@@ -22,8 +26,13 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 	protected String[] otherInfo = new String[2];
 	protected Graphe myMap = new Graphe();
 	protected boolean youMove = false;		// boolean value to send to another agent, indicating whether he moves or not
+	
 	protected Set<String> commonKnowledge = new HashSet<>();	// a list of all AIDs (in String form) of agents I am certain know the whole map
-	protected Set<String> victoryKnowledge = new HashSet<>();
+	protected Set<String> victoryKnowledge = new HashSet<>();	// same as above, but for the end
+	protected Set<AID> children = new HashSet<>();
+	public Map<AID, Tuple4<Observation, String, Integer, Integer>> agent_info = new HashMap<>(); // a map with all info of agents
+	// mapped on AID, info = (TreasureType, agentType, Strength, Lockpicking)
+
 	
 	protected String goalNode = null;
 	protected String siloNode = null;
@@ -87,8 +96,14 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		youMove = value;
 	}
 	
-	public void mergeKnowledge(Set<String> other) {
+	public boolean knowsAbout(boolean isCommon, AID agent) {
+		return isCommon ? commonKnowledge.contains(agent.toString()) : victoryKnowledge.contains(agent.toString());
+	}
+	
+	public boolean mergeKnowledge(Set<String> other) {
+		int before = commonKnowledge.size();
 		commonKnowledge.addAll(other);
+		return commonKnowledge.size() != before;
 	}
 	
 	public void mergeVKnowledge(Set<String> other) {
@@ -120,7 +135,21 @@ public abstract class MyAbstractAgent extends AbstractDedaleAgent {
 		
 		return res;
 	}
-
+	
+	public void addChild(AID child) {
+		children.add(child);
+	}
+	
+	public boolean mergeAgentInfo(AID interlocuteur, Map<AID, Tuple4<Observation, String, Integer, Integer>> other) {
+		for (AID agent : other.keySet()) {
+			agent_info.put(agent, other.get(agent));
+		}
+		
+		children.remove(interlocuteur);
+		
+		return children.size() == 0;
+	}
+	
 	public void setSiloNode(String node) {
 		siloNode = node;
 		myMap.setSiloNode(node);

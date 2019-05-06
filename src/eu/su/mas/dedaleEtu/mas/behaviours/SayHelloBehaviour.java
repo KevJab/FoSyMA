@@ -56,7 +56,6 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
 				// I'm not sending a message to myself
 				for (DFAgentDescription dfad : result){
 					System.out.println("I am "+ myagent.getAID() + "and the DF tells me about " + dfad.getName());
@@ -87,8 +86,10 @@ public class SayHelloBehaviour extends OneShotBehaviour{
 				// I'm not sending a message to myself
 				for (DFAgentDescription dfad : result){
 					System.out.println("I am "+ myagent.getAID() + "and the DF tells me about " + dfad.getName());
-					if(!dfad.getName().equals(myagent.getAID()))
-						msg.addReceiver(dfad.getName());
+					if(!dfad.getName().equals(myagent.getAID())) {
+						if ((type != ECHO) || (!myagent.knowsAbout(true, dfad.getName())))
+							msg.addReceiver(dfad.getName());
+					}
 				}
 				
 				//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)

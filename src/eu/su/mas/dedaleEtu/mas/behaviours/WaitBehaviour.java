@@ -4,11 +4,16 @@ package eu.su.mas.dedaleEtu.mas.behaviours;
 import java.util.HashSet;
 import java.util.Set;
 
+import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.MyAbstractAgent;
 import eu.su.mas.dedaleEtu.mas.object.Graphe;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -26,6 +31,7 @@ public class WaitBehaviour extends WakerBehaviour {
 	public static final int SEND = 3;
 	public static final int ECHO = 4;
 	public static final int WIN = 5;
+	public static final int REQUESTREPLY = 6;
 	
 	private int type;
 
@@ -41,6 +47,7 @@ public class WaitBehaviour extends WakerBehaviour {
 	@Override
 	public void onStart() {
 		MyAbstractAgent myagent = (MyAbstractAgent) this.myAgent;
+		
 		if(type == SEND) {
 			//1°Create the message
 			final ACLMessage msg = new ACLMessage(ACLMessage.AGREE);
@@ -49,6 +56,32 @@ public class WaitBehaviour extends WakerBehaviour {
 			
 			msg.setContent(myagent.doYouMove() + "," + myagent.getMyMap().getGoal() + ","+ myagent.getMyMap().getMyPos());
 			myagent.sendMessage(msg);
+		} else if (type == REQUESTREPLY) {
+			DFAgentDescription dfd = new DFAgentDescription();
+			ServiceDescription sd = new ServiceDescription () ;
+			sd.setType( "ANY" ); // type of the agent
+			dfd.addServices(sd) ;
+			DFAgentDescription[] result;
+			try {
+				result = DFService.search( myagent , dfd);
+				//You get the list of all the agents (AID) of said type
+				
+				//A message is defined by : a performative, a sender, a set of receivers, (a protocol),(a content (and/or contentOBject))
+				ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+				msg.setSender(myagent.getAID());
+				
+				// I'm not sending a message to myself
+				for (DFAgentDescription dfad : result){
+					if(!dfad.getName().equals(myagent.getAID()))
+						msg.addReceiver(dfad.getName());
+				}
+				
+				//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
+				((AbstractDedaleAgent)myagent).sendMessage(msg);
+				
+			} catch (FIPAException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -150,9 +183,9 @@ public class WaitBehaviour extends WakerBehaviour {
 				for(String s : msg.getInReplyTo().split(" ")) {
 					other_knowledge.add(s);
 				}
-				myagent.mergeKnowledge(other_knowledge);
+				boolean newInfo = myagent.mergeKnowledge(other_knowledge);
 				
-				endVal = (myagent.isCommonKnowledge()) ? 2 : 1;		
+				endVal = (newInfo) ? 2 : 1;		
 				break;
 			case WIN:
 				Graphe gw = null;

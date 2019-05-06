@@ -6,7 +6,9 @@ import java.util.List;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agents.dedaleDummyAgents.DummyWumpusShift;
+import eu.su.mas.dedaleEtu.mas.agents.MyCollectorAgent;
 import eu.su.mas.dedaleEtu.mas.agents.MyExplorerAgent;
+import eu.su.mas.dedaleEtu.mas.agents.MySiloAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreSoloAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.MyDummyMigrationAgent;
 import eu.su.mas.dedale.mas.agents.GateKeeperAgent;
@@ -357,7 +359,7 @@ public class Principal {
 		Object [] entityParametersC={"My parameters"};
 		
 		//4) Give the class name of your agent to let the system instantiate it
-		ag=createNewDedaleAgent(c, agentName, DummyCollectorAgent.class.getName(), entityParametersC);
+		ag=createNewDedaleAgent(c, agentName, MyCollectorAgent.class.getName(), entityParametersC);
 		agentList.add(ag);
 		
 		/***************
@@ -375,7 +377,7 @@ public class Principal {
 		Object [] entityParametersT={"My parameters"};
 		
 		//4) Give the class name of your agent to let the system instantiate it
-		ag=createNewDedaleAgent(c, agentName, DummyTankerAgent.class.getName(), entityParametersT);
+		ag=createNewDedaleAgent(c, agentName, MySiloAgent.class.getName(), entityParametersT);
 		agentList.add(ag);
 		
 		

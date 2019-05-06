@@ -21,8 +21,7 @@ public class MySiloAgent extends MyAbstractAgent {
 	
 	private static final long serialVersionUID = -6688123700288962519L;
 	
-	public Map<AID, Tuple4<Observation, String, Integer, Integer>> agent_info = new HashMap<>();
-	// map containing, for each agent (identified by his AID), his TreasureType, type (explorer, collector), strength and lockpicking power
+	
 
 	// a map with all other agents' tasks. For each agent (AID), you have the goalNode and the groupLeader (their new interlocuteur)
 	
